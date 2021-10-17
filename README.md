@@ -11,4 +11,6 @@ World's most awesome and secure chat.
 
 ## Run on localhost:3000
 
-`yarn dev`
+- Install dependencies: `yarn`.
+
+- Run server: `yarn dev`.
