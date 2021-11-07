@@ -1,10 +1,15 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "@styles/Home.module.css";
+import Image from "next/image";
 
-const Home: NextPage = () => {
+import ValarButton from "@components/ValarButton";
+import { useRouter } from "next/dist/client/router";
+
+const LandingPage: NextPage = () => {
+  const router = useRouter();
+
   return (
-    <div className="centerOnScreen">
+    <div className="centerOnScreenCol">
       <Head>
         <title>Valar</title>
         <meta
@@ -14,11 +19,28 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <main className="centered">
-        <h1>Valar</h1>
+      <main className="centeredCol">
+        <Image
+          src={require("../public/favicon.png")}
+          width={150}
+          height={150}
+          alt="Logo de Valar"
+        />
+        <h1 className="p-5">Valar</h1>
+        <div className="centerColStretchHorizontally">
+          <ValarButton
+            text="Sign In"
+            onClick={() => router.push("/auth/signin")}
+          />
+          <ValarButton
+            text="Sign Up"
+            onClick={() => router.push("/auth/signup")}
+            secondary
+          />
+        </div>
       </main>
     </div>
   );
 };
 
-export default Home;
+export default LandingPage;

@@ -1,9 +1,20 @@
-html,
-body {
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap");
+
+:root {
+  --primary: rgb(139, 26, 16);
+  --secondary: rgb(67, 67, 67);
+  --tertiary: rgb(238, 238, 238);
+}
+
+* {
+  box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+html {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
 }
 
 a {
@@ -11,11 +22,17 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+input,
+textarea,
+button {
+  font-family: inherit;
 }
 
-.centerOnScreen {
+.p-5 {
+  padding: 1.5rem;
+}
+
+.centerOnScreenRow {
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -23,8 +40,54 @@ a {
   align-items: center;
 }
 
-.centered {
+.centerOnScreenCol {
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.centeredRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centeredCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.centerColStretchHorizontally {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.valarButton {
+  border: none;
+  padding: 25px 45px;
+  color: white;
+  margin: 10px 0px;
+  font-size: 1.2rem;
+}
+
+.valarButton:hover {
+  cursor: pointer;
+}
+
+.valarButton:focus {
+  opacity: 0.9;
+}
+
+.primaryBackground {
+  background-color: var(--primary);
+}
+
+.secondaryBackground {
+  background-color: var(--secondary);
 }
