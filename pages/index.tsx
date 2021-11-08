@@ -7,7 +7,7 @@ import { useRouter } from "next/dist/client/router";
 
 const LandingPage: NextPage = () => {
   const router = useRouter();
-
+  // TODO: CLAMP
   return (
     <div className="centerOnScreenCol">
       <Head>
@@ -19,14 +19,15 @@ const LandingPage: NextPage = () => {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <main className="centeredCol">
+      <main className="w-responsive centerColStretchHorizontally">
         <Image
           src={require("../public/favicon.png")}
+          objectFit={"contain"}
           width={150}
           height={150}
           alt="Logo de Valar"
         />
-        <h1 className="p-5">Valar</h1>
+        <h1 className="p-5 text-center">Valar</h1>
         <div className="centerColStretchHorizontally">
           <ValarButton
             text="Sign In"

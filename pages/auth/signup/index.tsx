@@ -4,7 +4,7 @@ import Head from "next/head";
 
 const SignUp: NextPage = () => {
   return (
-    <section className="centerOnScreenCol">
+    <>
       <Head>
         <title>Valar</title>
         <meta
@@ -16,7 +16,7 @@ const SignUp: NextPage = () => {
       <main>
         <ValarSignUp />
       </main>
-    </section>
+    </>
   );
 };
 

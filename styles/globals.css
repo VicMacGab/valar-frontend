@@ -32,6 +32,10 @@ button {
   padding: 1.5rem;
 }
 
+.ml-1 {
+  margin-left: 0.5rem;
+}
+
 .centerOnScreenRow {
   height: 100vh;
   width: 100vw;
@@ -51,7 +55,31 @@ button {
 .centeredRow {
   display: flex;
   justify-content: center;
+  align-items: stretch;
+}
+
+.centeredRowNav {
+  display: flex;
+  justify-content: center;
   align-items: center;
+}
+
+.centeredRowSpaceBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.homeButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+@media screen and (max-width: 600px) {
+  .homeButtons {
+    flex-direction: column;
+  }
 }
 
 .centeredCol {
@@ -76,6 +104,10 @@ button {
   font-size: 1.2rem;
 }
 
+.valarButton:disabled:hover {
+  cursor: not-allowed;
+}
+
 .valarButton:hover {
   cursor: pointer;
 }
@@ -90,4 +122,76 @@ button {
 
 .secondaryBackground {
   background-color: var(--secondary);
+}
+
+.valarInput {
+  padding: 10px;
+  margin: 20px 10px;
+  outline: none;
+}
+
+.valarSearchInput {
+  outline: none;
+  padding: 0px 10px;
+  margin: 10px 0;
+  font-size: 1.2rem;
+}
+
+.flex-big {
+  flex: 5;
+}
+
+.flex-small {
+  flex: 1;
+}
+
+.valarInputError {
+  text-align: center;
+  font-size: 0.8rem;
+  color: red;
+  max-width: 100%;
+  margin-top: -10px;
+}
+
+.w-responsive {
+  width: clamp(250px, 500px, 50%);
+}
+
+.navigation {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 80px;
+}
+
+.navInfo {
+  margin-right: 15px;
+}
+
+.centerRowPushRight {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.bold {
+  font-weight: 900;
+}
+
+.homeButton {
+  flex: 1 1 0px;
+  margin: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.margin-top-80 {
+  margin-top: 80px;
+}
+
+.searchContainerWidth {
+  width: clamp(250px, 60%, 80%);
 }
