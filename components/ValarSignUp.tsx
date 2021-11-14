@@ -5,6 +5,7 @@ import CommonService from "services/CommonService";
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
+import ClientService from "services/ClientService";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -24,12 +25,12 @@ const ValarSignUp: React.FC<any> = (props) => {
       password: formValues.password,
     });
 
-    axios
-      .post(CommonService.signUpUrl, {
-        username: formValues.username,
-        email: formValues.email,
-        password: formValues.password,
-      })
+    // TODO: probar
+    ClientService.signUp({
+      username: formValues.username,
+      email: formValues.email,
+      password: formValues.password,
+    })
       .then((res: AxiosResponse) => {
         // 200-299
         console.log("Server Response: ", { res });
@@ -39,6 +40,19 @@ const ValarSignUp: React.FC<any> = (props) => {
         // 300-500
         console.log("Server Error: ", { err });
       });
+
+    // axios
+    //   .post(CommonService.signupUrl, {
+    //     username: formValues.username,
+    //     email: formValues.email,
+    //     password: formValues.password,
+    //   })
+    //   .then((res: AxiosResponse) => {
+
+    //   })
+    //   .catch((err: AxiosError) => {
+
+    //   });
   };
 
   const schema = Yup.object({

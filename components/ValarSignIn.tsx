@@ -23,7 +23,7 @@ const ValarSignIn: React.FC<any> = (props) => {
     });
 
     axios
-      .post(CommonService.signInUrl, {
+      .post(CommonService.signinUrl, {
         username: formValues.username,
         password: formValues.password,
       })
