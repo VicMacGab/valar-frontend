@@ -6,6 +6,7 @@ import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
+import ValarModal from "./ValarModal";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -25,7 +26,6 @@ const ValarSignUp: React.FC<any> = (props) => {
       password: formValues.password,
     });
 
-    // TODO: probar
     ClientService.signUp({
       username: formValues.username,
       email: formValues.email,
@@ -38,21 +38,8 @@ const ValarSignUp: React.FC<any> = (props) => {
       })
       .catch((err: AxiosError) => {
         // 300-500
-        console.log("Server Error: ", { err });
+        console.log("Server Error: ", { err: err.response });
       });
-
-    // axios
-    //   .post(CommonService.signupUrl, {
-    //     username: formValues.username,
-    //     email: formValues.email,
-    //     password: formValues.password,
-    //   })
-    //   .then((res: AxiosResponse) => {
-
-    //   })
-    //   .catch((err: AxiosError) => {
-
-    //   });
   };
 
   const schema = Yup.object({
@@ -69,6 +56,7 @@ const ValarSignUp: React.FC<any> = (props) => {
 
   return (
     <section className="centerOnScreenCol">
+      {/* <ValarModal isOpen title="Hola" body="Que Tal" okText="Listo" /> */}
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
         onSubmit={signUp}

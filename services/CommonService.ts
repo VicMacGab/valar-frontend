@@ -3,7 +3,7 @@ class CommonService {
   static readonly signinUrl: string = CommonService.baseUrl + "/auth/signin";
   static readonly signupUrl: string = CommonService.baseUrl + "/auth/signup";
   static readonly searchUserByUsernameUrl: string =
-    CommonService.baseUrl + "/user/search";
+    CommonService.baseUrl + "/user";
 }
 
 export default CommonService;

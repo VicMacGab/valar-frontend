@@ -7,7 +7,7 @@ const Home: NextPage = () => {
 
   return (
     <main className="centerOnScreenRow">
-      <div className="w-home-responsive homeButtons">
+      <div className="w-responsive-home-buttons homeButtons">
         <ValarButton
           className="homeButton"
           text="Solicitudes"
