@@ -3,7 +3,7 @@ import { NextPage } from "next";
 
 const SolicitarContacto: NextPage = () => {
   return (
-    <section className="centeredCol">
+    <section className="centerOnScreenCol">
       <ValarSolicitarContacto />
     </section>
   );

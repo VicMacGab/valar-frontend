@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MutableRefObject, useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -8,30 +8,46 @@ import {
   SIZE,
   ROLE,
 } from "baseui/modal";
+import { KIND } from "baseui/button";
 
 interface ValarModalProps {
   title: string;
   body: any;
-  okText: string;
   isOpen: boolean;
-  onClose?: () => void;
+  okText?: string;
+  cancelText?: string;
+  onCancel?: () => void;
+  onConfirm?: () => void;
 }
 
 const ValarModal: React.FC<ValarModalProps> = (props) => {
   return (
     <Modal
-      onClose={() => props.onClose}
-      closeable
+      onClose={() => props.onCancel}
       isOpen={props.isOpen}
       animate
       autoFocus
       size={SIZE.default}
       role={ROLE.dialog}
+      overrides={{
+        Close: {
+          style: ({ $theme }) => ({
+            display: "none",
+          }),
+        },
+      }}
     >
       <ModalHeader>{props.title}</ModalHeader>
       <ModalBody>{props.body}</ModalBody>
       <ModalFooter>
-        <ModalButton onClick={props.onClose}>{props.okText}</ModalButton>
+        {props.okText && (
+          <ModalButton onClick={props.onConfirm} kind={KIND.secondary}>
+            {props.okText}
+          </ModalButton>
+        )}
+        {props.cancelText && (
+          <ModalButton onClick={props.onCancel}>{props.cancelText}</ModalButton>
+        )}
       </ModalFooter>
     </Modal>
   );

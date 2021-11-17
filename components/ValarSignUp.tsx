@@ -1,12 +1,10 @@
-import { useState } from "react";
 import ValarButton from "./ValarButton";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import CommonService from "services/CommonService";
+import { AxiosError, AxiosResponse } from "axios";
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
-import ValarModal from "./ValarModal";
+import { useState } from "react";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -14,12 +12,14 @@ interface SignUpFormValues {
 }
 
 const ValarSignUp: React.FC<any> = (props) => {
+  const [isBusy, setIsBusy] = useState(false);
   const router = useRouter();
 
   const signUp = (
     formValues: SignUpFormValues,
     actions: FormikHelpers<SignUpFormValues>
   ) => {
+    setIsBusy(true);
     console.log("user sign up", {
       username: formValues.username,
       email: formValues.email,
@@ -34,12 +34,13 @@ const ValarSignUp: React.FC<any> = (props) => {
       .then((res: AxiosResponse) => {
         // 200-299
         console.log("Server Response: ", { res });
-        router.push("/home");
+        router.push("/auth/code");
       })
       .catch((err: AxiosError) => {
         // 300-500
         console.log("Server Error: ", { err: err.response });
-      });
+      })
+      .finally(() => setIsBusy(false));
   };
 
   const schema = Yup.object({
@@ -56,7 +57,6 @@ const ValarSignUp: React.FC<any> = (props) => {
 
   return (
     <section className="centerOnScreenCol">
-      {/* <ValarModal isOpen title="Hola" body="Que Tal" okText="Listo" /> */}
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
         onSubmit={signUp}
@@ -109,11 +109,7 @@ const ValarSignUp: React.FC<any> = (props) => {
                 {props.errors.password}
               </div>
             )}
-            <ValarButton
-              type="submit"
-              text="Sign Up"
-              // disabled={props.isValid}
-            />
+            <ValarButton type="submit" text="Sign Up" disabled={isBusy} />
           </form>
         )}
       </Formik>

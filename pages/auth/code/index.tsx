@@ -1,8 +1,8 @@
-import ValarSignIn from "@components/ValarSignIn";
+import ValarAuthCode from "@components/ValarAuthCode";
 import { NextPage } from "next";
 import Head from "next/head";
 
-const SignIn: NextPage = () => {
+const AuthCode: NextPage = () => {
   return (
     <section className="centerOnScreenCol">
       <Head>
@@ -13,11 +13,11 @@ const SignIn: NextPage = () => {
         />
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <main>
-        <ValarSignIn />
+      <main className="centeredCol">
+        <ValarAuthCode />
       </main>
     </section>
   );
 };
 
-export default SignIn;
+export default AuthCode;

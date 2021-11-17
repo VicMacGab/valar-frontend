@@ -2,7 +2,7 @@ import ValarHeader from "@components/ValarHeader";
 import "@styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/dist/client/router";
-import { styletron } from "../utils/general/styletron";
+import { styletron } from "@utils/general/styletron";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, createTheme } from "baseui";
 import { useEffect } from "react";

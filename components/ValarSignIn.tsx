@@ -1,8 +1,7 @@
 import { useState } from "react";
 import ValarButton from "./ValarButton";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import CommonService from "services/CommonService";
-import { Formik, FormikHelpers, FormikProps } from "formik";
+import { AxiosError, AxiosResponse } from "axios";
+import { Formik, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
@@ -13,11 +12,10 @@ interface SignInFormValues {
 
 const ValarSignIn: React.FC<any> = (props) => {
   const router = useRouter();
+  const [isBusy, setIsBusy] = useState(false);
 
-  const signIn = (
-    formValues: SignInFormValues,
-    actions: FormikHelpers<SignInFormValues>
-  ) => {
+  const signIn = (formValues: SignInFormValues) => {
+    setIsBusy(true);
     console.log("user sign in", {
       username: formValues.username,
       password: formValues.password,
@@ -30,12 +28,13 @@ const ValarSignIn: React.FC<any> = (props) => {
       .then((res: AxiosResponse) => {
         // 200-299
         console.log("Server Response: ", { res });
-        router.push("/home");
+        router.push("/auth/code");
       })
       .catch((err: AxiosError) => {
         // 300-500
         console.log("Server Error: ", { err: err.response });
-      });
+      })
+      .finally(() => setIsBusy(false));
   };
 
   const schema = Yup.object({
@@ -88,7 +87,7 @@ const ValarSignIn: React.FC<any> = (props) => {
                 {props.errors.password}
               </div>
             )}
-            <ValarButton type="submit" text="Sign In" />
+            <ValarButton type="submit" text="Sign In" disabled={isBusy} />
           </form>
         )}
       </Formik>

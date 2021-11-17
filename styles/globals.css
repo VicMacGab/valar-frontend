@@ -52,6 +52,12 @@ button {
   align-items: center;
 }
 
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .centeredRow {
   display: flex;
   justify-content: center;
@@ -198,4 +204,10 @@ button {
 
 .searchContainerWidth {
   width: clamp(250px, 60%, 80%);
+}
+
+@media screen and (max-width: 600px) {
+  .solicitarContactoContainer {
+    flex-direction: column;
+  }
 }

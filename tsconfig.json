@@ -16,12 +16,11 @@
     "baseUrl": "./",
     "paths": {
       "@styles/*": ["styles/*"],
-      "@components/*": ["components/*"]
-      // "@hooks/*": ["hooks/*"],
-      // "@interfaces/*": ["interfaces/*"],
-      // "@workers/*": ["workers/*"],
-      // "@store/*": ["store/*"]
-    }
+      "@components/*": ["components/*"],
+      "@services/*": ["services/*"],
+      "@utils/*": ["utils/*"]
+    },
+    "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
