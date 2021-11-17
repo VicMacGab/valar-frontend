@@ -14,7 +14,11 @@ const Home: NextPage = () => {
           onClick={() => router.push("/home/solicitarContacto")}
         />
         <ValarButton className="homeButton" text="Mensajes" />
-        <ValarButton className="homeButton" text="Perfil" />
+        <ValarButton
+          className="homeButton"
+          text="Perfil"
+          onClick={() => router.push("/home/perfil")}
+        />
       </div>
     </main>
   );

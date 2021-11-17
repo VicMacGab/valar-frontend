@@ -1,37 +1,33 @@
-import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import type {
+  NextFetchEvent,
+  NextRequest as NextRequestType,
+  NextResponse as NextResponseType,
+} from "next/server";
+import { NextResponse } from "next/server";
+import cookieParser from "cookie-parser";
 
 export function middleware(
-  req: NextRequest,
+  req: NextRequestType,
   ev: NextFetchEvent,
-  res: NextResponse
+  res: NextResponseType
 ) {
   const cookies = req.cookies;
-  console.log(JSON.stringify(cookies, null, 2));
+  const valarSession = cookies["valarSession"];
 
-  // TODO: hay dos cookies
-
-  // una se usa para guardar el username de tal manera que al verificar el código de autenticacion, se revise el cookie
-  // se obtenga el username del payload del JWT y se pueda comparar el authCode con el que tiene el hash
-
-  // otra se usa para mantener logueado al usuario, si el cookie expira (o se borra), entonces el usuario no debe
-  // tener acceso a las rutas
-
-  // TODO: rechazar acceso si no esta el cookie de login
-
-  const token = cookies["username"];
-
-  if (token) {
-    const buf = Buffer.from(token, "base64");
-
-    const decodedJWT = buf.toString("ascii");
-
-    console.log("Decoded JWT: ", decodedJWT);
-
-    console.log("JWT SECRET: ", process.env.JWT_SECRET);
-  } else {
-    // TODO: no mandó el cookie, esta deslogueado, no dejarlo pasar
-    console.log("no mandó el cookie, está deslogueado");
+  if (!valarSession) {
+    return NextResponse.redirect("/");
   }
 
-  return res;
+  const unsignedCookie = cookieParser.signedCookie(
+    valarSession,
+    process.env.COOKIES_SECRET!
+  );
+
+  // cookie has been tampered
+  if (unsignedCookie === false || unsignedCookie === valarSession) {
+    console.log("valarSession cookie has been tampered");
+    return NextResponse.redirect("/").clearCookie("valarSession");
+  } else {
+    return res;
+  }
 }

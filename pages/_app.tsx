@@ -6,6 +6,7 @@ import { styletron } from "@utils/general/styletron";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, createTheme } from "baseui";
 import { useEffect } from "react";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const valarTheme = createTheme({
   primary: "#8b1a10",

@@ -7,10 +7,19 @@ import ValarModal from "./ValarModal";
 import ClientService from "@services/ClientService";
 import { AxiosError, AxiosResponse } from "axios";
 
+enum AuthCodeState {
+  Valid,
+  Incorrect,
+  Expired,
+  None,
+}
+
 const ValarAuthCode: React.FC<{}> = (props) => {
   const router = useRouter();
 
-  const [authCodeExpired, setAuthCodeExpired] = useState(false);
+  const [authCodeState, setAuthCodeState] = useState<AuthCodeState>(
+    AuthCodeState.None
+  );
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalBody, setModalBody] = useState("");
@@ -25,7 +34,7 @@ const ValarAuthCode: React.FC<{}> = (props) => {
         console.group("Verify Auth Code Res");
         console.log(res);
         console.groupEnd();
-        setAuthCodeExpired(false);
+        setAuthCodeState(AuthCodeState.Valid);
         setModalTitle("¡Autenticado correctamente!");
         setModalBody("Bienvenido a Valar.");
       })
@@ -33,26 +42,23 @@ const ValarAuthCode: React.FC<{}> = (props) => {
         console.group("Verify Auth Code Err");
         console.log(err.response);
         console.groupEnd();
-        setAuthCodeExpired(true);
-        setModalTitle("Oops!");
-        setModalBody("El código expiró. Inténtalo de nuevo.");
+
+        if (err.response?.status == 404) {
+          setAuthCodeState(AuthCodeState.Incorrect);
+          setModalTitle("Oops!");
+          setModalBody("El código es incorrecto. Inténtalo de nuevo.");
+        } else if (err.response?.status == 403) {
+          setAuthCodeState(AuthCodeState.Expired);
+          setModalTitle("Oops!");
+          setModalBody("El código expiró. Inténtalo de nuevo.");
+        }
       })
       .finally(() => setModalIsOpen(true));
   };
 
-  const goHome = () => {
-    router.push("/home");
-    modalCleanup();
-  };
-
-  const goBack = () => {
-    router.push("/");
-    modalCleanup();
-  };
-
   const modalCleanup = () => {
     setModalIsOpen(false);
-    setAuthCodeExpired(false);
+    setAuthCodeState(AuthCodeState.None);
     setIsBusy(false);
   };
 
@@ -62,14 +68,34 @@ const ValarAuthCode: React.FC<{}> = (props) => {
       .length(4, "El código es de 4 caracteres."),
   });
 
+  const getOkText = (): string => {
+    if (
+      authCodeState == AuthCodeState.Expired ||
+      authCodeState == AuthCodeState.Incorrect
+    ) {
+      return "OK";
+    } else {
+      return "Gracias";
+    }
+  };
+
+  const onConfirm = () => {
+    if (authCodeState == AuthCodeState.Expired) {
+      router.push("/");
+    } else if (authCodeState == AuthCodeState.Valid) {
+      router.push("/home");
+    }
+    modalCleanup();
+  };
+
   return (
     <>
       <ValarModal
         isOpen={modalIsOpen}
         title={modalTitle}
         body={modalBody}
-        okText={authCodeExpired ? "OK" : "Gracias"}
-        onConfirm={() => (authCodeExpired ? goBack() : goHome())}
+        okText={getOkText()}
+        onConfirm={onConfirm}
       />
       <h1 className="bold">¡Revisa tu correo!</h1>
       <h4>Ingresa el código que te llegó a tu correo:</h4>

@@ -1,19 +1,34 @@
-import type { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import cookieParser from "cookie-parser";
+import type {
+  NextFetchEvent,
+  NextRequest as NextRequestType,
+  NextResponse as NextResponseType,
+} from "next/server";
+import { NextResponse } from "next/server";
 
 export function middleware(
-  req: NextRequest,
+  req: NextRequestType,
   ev: NextFetchEvent,
-  res: NextResponse
+  res: NextResponseType
 ) {
   const cookies = req.cookies;
-  console.log(JSON.stringify(cookies, null, 2));
+  const valarSession = cookies["valarSession"];
 
-  // TODO: no dejarlo pasar si tenemos el cookie de login ''
+  if (!valarSession) {
+    return res;
+  }
 
-  // una se usa para guardar el username de tal manera que al verificar el código de autenticacion, se revise el cookie
-  // se obtenga el username del payload del JWT y se pueda comparar el authCode con el que tiene el hash
+  const unsignedCookie = cookieParser.signedCookie(
+    valarSession,
+    process.env.COOKIES_SECRET!
+  );
 
-  const token = cookies["valarSession"];
+  console.log("unsigned valarSession: ", unsignedCookie);
 
-  return res;
+  // cookie has been tampered
+  if (unsignedCookie === false || unsignedCookie === valarSession) {
+    return NextResponse.redirect("/").clearCookie("valarSession");
+  } else {
+    return NextResponse.redirect("/home");
+  }
 }

@@ -2,6 +2,8 @@ import ValarAuthCode from "@components/ValarAuthCode";
 import { NextPage } from "next";
 import Head from "next/head";
 
+// TODO: middleware, si no tiene el 'username' token, no debería entrar a esta vista
+
 const AuthCode: NextPage = () => {
   return (
     <section className="centerOnScreenCol">
