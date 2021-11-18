@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
 import { useState } from "react";
+import ValarModal from "./ValarModal";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -13,6 +14,10 @@ interface SignUpFormValues {
 
 const ValarSignUp: React.FC<any> = (props) => {
   const [isBusy, setIsBusy] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalBody, setModalBody] = useState("");
+
   const router = useRouter();
 
   const signUp = (
@@ -39,8 +44,13 @@ const ValarSignUp: React.FC<any> = (props) => {
       .catch((err: AxiosError) => {
         // 300-500
         console.log("Server Error: ", { err: err.response });
+        setModalTitle("¡Ocurrió un conflicto!");
+        setModalBody(err.response?.data.msg);
       })
-      .finally(() => setIsBusy(false));
+      .finally(() => {
+        setIsBusy(false);
+        setModalIsOpen(true);
+      });
   };
 
   const schema = Yup.object({
@@ -57,6 +67,13 @@ const ValarSignUp: React.FC<any> = (props) => {
 
   return (
     <section className="centerOnScreenCol">
+      <ValarModal
+        isOpen={modalIsOpen}
+        title={modalTitle}
+        body={modalBody}
+        okText={"OK"}
+        onConfirm={() => setModalIsOpen(false)}
+      />
       <Formik
         initialValues={{ username: "", email: "", password: "" }}
         onSubmit={signUp}
