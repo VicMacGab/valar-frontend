@@ -46,10 +46,10 @@ const ValarSignUp: React.FC<any> = (props) => {
         console.log("Server Error: ", { err: err.response });
         setModalTitle("¡Ocurrió un conflicto!");
         setModalBody(err.response?.data.msg);
+        setModalIsOpen(true);
       })
       .finally(() => {
         setIsBusy(false);
-        setModalIsOpen(true);
       });
   };
 

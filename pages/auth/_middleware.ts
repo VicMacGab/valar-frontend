@@ -18,6 +18,7 @@ export function middleware(
     return res;
   }
 
+  // verifico [M]
   const unsignedCookie = cookieParser.signedCookie(
     valarSession,
     process.env.COOKIES_SECRET!
