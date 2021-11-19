@@ -1,9 +1,18 @@
+import { useRouter } from "next/dist/client/router";
 import Image from "next/image";
 
-const ValarHeader: React.FC<{}> = (props) => {
+interface ValarHeaderProps {
+  className?: string;
+}
+
+const ValarHeader: React.FC<ValarHeaderProps> = (props) => {
+  const router = useRouter();
   return (
     <nav className="navigation centerRowPushRight">
-      <div className="centeredRowNav p-5 navInfo">
+      <div
+        className="centeredRowNav p-5 navInfo"
+        onClick={() => router.push("/home")}
+      >
         <Image
           src={require("../public/favicon.png")}
           alt="Logo de Valar"

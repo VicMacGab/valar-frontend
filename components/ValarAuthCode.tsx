@@ -37,6 +37,7 @@ const ValarAuthCode: React.FC<{}> = (props) => {
         setAuthCodeState(AuthCodeState.Valid);
         setModalTitle("¡Autenticado correctamente!");
         setModalBody("Bienvenido a Valar.");
+        router.push("/home");
       })
       .catch((err: AxiosError) => {
         console.group("Verify Auth Code Err");
@@ -52,8 +53,8 @@ const ValarAuthCode: React.FC<{}> = (props) => {
           setModalTitle("Oops!");
           setModalBody("El código expiró. Inténtalo de nuevo.");
         }
-      })
-      .finally(() => setModalIsOpen(true));
+        setModalIsOpen(true);
+      });
   };
 
   const modalCleanup = () => {

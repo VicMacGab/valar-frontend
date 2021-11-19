@@ -62,7 +62,10 @@ const ValarSignUp: React.FC<any> = (props) => {
       .email("Debe ser un email válido."),
     password: Yup.string()
       .required("Este campo es obligatorio.")
-      .min(6, "La contraseña debe tener 6 caracteres como mínimo."),
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+        "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula y un número."
+      ),
   });
 
   return (

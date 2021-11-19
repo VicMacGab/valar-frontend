@@ -130,6 +130,10 @@ button {
   background-color: var(--secondary);
 }
 
+.tertiaryBackground {
+  background-color: var(--tertiary);
+}
+
 .valarInput {
   padding: 10px;
   margin: 20px 10px;

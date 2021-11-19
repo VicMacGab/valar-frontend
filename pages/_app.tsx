@@ -7,6 +7,7 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, createTheme } from "baseui";
 import { useEffect } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
+import Head from "next/head";
 
 const valarTheme = createTheme({
   primary: "#8b1a10",
@@ -29,8 +30,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <StyletronProvider value={styletron}>
       <BaseProvider theme={valarTheme}>
-        {router.pathname != "/" && <ValarHeader />}
-        <div className="margin-top-80">
+        <Head>
+          <title>Valar</title>
+          <meta
+            name="description"
+            content="World's most awesome and secure chat."
+          />
+          <link rel="icon" href="/favicon.png" />
+        </Head>
+        {router.pathname != "/" && <ValarHeader className="bgTertiary" />}
+        <div className="tertiaryBackground">
           <Component {...pageProps} />
         </div>
       </BaseProvider>

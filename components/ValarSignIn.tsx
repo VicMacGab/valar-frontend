@@ -43,7 +43,7 @@ const ValarSignIn: React.FC<any> = (props) => {
       .min(4, "El username debe tener 4 carateres como mínimo."),
     password: Yup.string()
       .required("Este campo es obligatorio.")
-      .min(6, "La contraseña debe tener 6 caracteres como mínimo."),
+      .min(8, "La contraseña debe tener 8 caracteres como mínimo."),
   });
 
   return (
@@ -87,7 +87,11 @@ const ValarSignIn: React.FC<any> = (props) => {
                 {props.errors.password}
               </div>
             )}
-            <ValarButton type="submit" text="Sign In" disabled={isBusy} />
+            <ValarButton
+              type="submit"
+              text="Sign In"
+              disabled={isBusy || !props.isValid}
+            />
           </form>
         )}
       </Formik>

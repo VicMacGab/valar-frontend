@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import Head from "next/head";
 import Image from "next/image";
 
 import ValarButton from "@components/ValarButton";
@@ -10,15 +9,6 @@ const LandingPage: NextPage = () => {
   // TODO: CLAMP
   return (
     <div className="centerOnScreenCol">
-      <Head>
-        <title>Valar</title>
-        <meta
-          name="description"
-          content="World's most awesome and secure chat."
-        />
-        <link rel="icon" href="/favicon.png" />
-      </Head>
-
       <main className="w-responsive centerColStretchHorizontally">
         <Image
           src={require("../public/favicon.png")}
