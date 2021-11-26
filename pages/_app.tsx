@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Head from "next/head";
 
+// TODO: ponerle limite de caracteres al username, password e email para evitar un DoS
+
 const valarTheme = createTheme({
   primary: "#8b1a10",
 });
@@ -36,6 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             name="description"
             content="World's most awesome and secure chat."
           />
+          {/* TODO: poner los og tags para los embeds */}
           <link rel="icon" href="/favicon.png" />
         </Head>
         {router.pathname != "/" && <ValarHeader className="bgTertiary" />}
