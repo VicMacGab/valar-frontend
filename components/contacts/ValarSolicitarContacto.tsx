@@ -1,4 +1,5 @@
 import { AxiosError, AxiosResponse } from "axios";
+import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 
 import ClientService from "services/ClientService";
@@ -11,6 +12,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalBody, setModalBody] = useState("");
   const [usernameNotFound, setUsernameNotFound] = useState(false);
+  const router = useRouter();
 
   const searchByUsername = () => {
     console.log("searching for user: ", username);
@@ -41,15 +43,15 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
       });
   };
 
-  const getIncomingRequests = () => {
-    ClientService.getIncomingRequests()
-      .then((res: AxiosResponse) => {
-        console.log(res);
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-      });
-  };
+  // const getIncomingRequests = () => {
+  //   ClientService.getIncomingRequests()
+  //     .then((res: AxiosResponse) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       console.log(err.response);
+  //     });
+  // };
 
   const sendChatRequest = () => {
     console.log(`mandarle solicitud a ${username}`);
@@ -73,17 +75,6 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
         setModalIsOpen(true);
       });
     //modalCleanup();
-  };
-
-  const acceptChatRequest = () => {
-    // TODO generalizar
-    ClientService.acceptChatRequest({ username: "mrmm" })
-      .then((res: AxiosResponse) => {
-        console.log(res);
-      })
-      .catch((err: AxiosError) => {
-        console.log(err.response);
-      });
   };
 
   const modalCleanup = () => {
@@ -135,16 +126,18 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
       <ValarButton
         className="flex-small"
         text="Ver solicitudes entrantes"
-        //disabled={username.length < 2}
         secondary
-        onClick={getIncomingRequests}
+        onClick={() =>
+          router.push("/home/solicitarContacto/solicitudes/entrantes")
+        }
       />
       <ValarButton
         className="flex-small"
-        text="Aceptar solicitud"
-        //disabled={username.length < 2}
+        text="Ver solicitudes pendientes"
         secondary
-        onClick={acceptChatRequest}
+        onClick={() =>
+          router.push("/home/solicitarContacto/solicitudes/pendientes")
+        }
       />
     </>
   );

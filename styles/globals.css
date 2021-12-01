@@ -170,6 +170,10 @@ button {
   width: clamp(250px, 500px, 50%);
 }
 
+.w-solicitudes {
+  width: clamp(300px, 40%, 600px);
+}
+
 .w-responsive-home-buttons {
   width: clamp(100px, 700px, 60%);
 }
