@@ -2,8 +2,8 @@ import { AxiosError, AxiosResponse } from "axios";
 import React, { useState } from "react";
 
 import ClientService from "services/ClientService";
-import ValarButton from "./ValarButton";
-import ValarModal from "./ValarModal";
+import ValarButton from "../general/ValarButton";
+import ValarModal from "../general/ValarModal";
 
 const ValarSolicitarContacto: React.FC<{}> = (props) => {
   const [username, setUsername] = useState("");
@@ -86,7 +86,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
           }
         />
         <ValarButton
-          className="flex-small"
+          className="flex-small my-2"
           text="Buscar"
           disabled={username.length < 2}
           secondary

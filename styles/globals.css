@@ -7,6 +7,7 @@
   --primary: rgb(139, 26, 16);
   --secondary: rgb(67, 67, 67);
   --tertiary: rgb(238, 238, 238);
+  --nav-height: 5rem;
 }
 
 * {
@@ -109,7 +110,6 @@ button {
   border: none;
   padding: 25px 45px;
   color: white;
-  margin: 10px 0px;
   font-size: 1.2rem;
 }
 
@@ -179,7 +179,7 @@ button {
   top: 0;
   right: 0;
   left: 0;
-  height: 80px;
+  height: var(--nav-height);
 }
 
 .navInfo {
@@ -206,7 +206,7 @@ button {
 }
 
 .margin-top-80 {
-  margin-top: 80px;
+  margin-top: var(--nav-height);
 }
 
 .searchContainerWidth {
@@ -216,5 +216,77 @@ button {
 @media screen and (max-width: 600px) {
   .solicitarContactoContainer {
     flex-direction: column;
+  }
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  justify-content: flex-end;
+  color: white;
+}
+
+.chat-message {
+  width: fit-content;
+  max-width: 50%;
+  height: auto;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.my-chat-message {
+  align-self: flex-end;
+  background-color: var(--primary);
+}
+
+.friend-chat-message {
+  align-self: flex-start;
+  background-color: var(--secondary);
+}
+
+.chatList {
+  flex: 3;
+}
+
+.chatSingle {
+  flex: 7;
+}
+
+.chatPreviewUsername {
+  flex: 8;
+}
+
+.chatPreviewIcon {
+  flex: 2;
+}
+
+.mensajesPageHeight {
+  height: calc(100vh - var(--nav-height));
+}
+
+.flex-8 {
+  flex: 8;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.centerAbsoluteVertically {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media screen and (min-width: 601px) {
+  .appearsWhenChatTight {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .dissapearsWhenChatTight {
+    display: none;
   }
 }

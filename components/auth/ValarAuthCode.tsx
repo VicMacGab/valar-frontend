@@ -1,9 +1,9 @@
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
-import ValarButton from "./ValarButton";
+import ValarButton from "../general/ValarButton";
 import * as Yup from "yup";
 import { Formik, FormikProps } from "formik";
-import ValarModal from "./ValarModal";
+import ValarModal from "../general/ValarModal";
 import ClientService from "@services/ClientService";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -124,6 +124,7 @@ const ValarAuthCode: React.FC<{}> = (props) => {
               </div>
             )}
             <ValarButton
+              className="my-2"
               text="Enviar"
               type="submit"
               disabled={!props.isValid || isBusy}

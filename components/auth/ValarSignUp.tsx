@@ -1,11 +1,11 @@
-import ValarButton from "./ValarButton";
+import ValarButton from "../general/ValarButton";
 import { AxiosError, AxiosResponse } from "axios";
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
 import { useState } from "react";
-import ValarModal from "./ValarModal";
+import ValarModal from "../general/ValarModal";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -129,7 +129,12 @@ const ValarSignUp: React.FC<any> = (props) => {
                 {props.errors.password}
               </div>
             )}
-            <ValarButton type="submit" text="Sign Up" disabled={isBusy} />
+            <ValarButton
+              className="my-2"
+              type="submit"
+              text="Sign Up"
+              disabled={isBusy}
+            />
           </form>
         )}
       </Formik>

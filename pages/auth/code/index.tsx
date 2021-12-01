@@ -1,4 +1,4 @@
-import ValarAuthCode from "@components/ValarAuthCode";
+import ValarAuthCode from "@components/auth/ValarAuthCode";
 import { NextPage } from "next";
 
 // TODO: middleware, si no tiene el 'username' token, no debería entrar a esta vista
