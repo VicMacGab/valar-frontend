@@ -1,4 +1,4 @@
-import ValarButton from "@components/ValarButton";
+import ValarButton from "@components/general/ValarButton";
 import { NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 
@@ -13,7 +13,11 @@ const Home: NextPage = () => {
           text="Solicitudes"
           onClick={() => router.push("/home/solicitarContacto")}
         />
-        <ValarButton className="homeButton" text="Mensajes" />
+        <ValarButton
+          className="homeButton"
+          text="Mensajes"
+          onClick={() => router.push("/home/mensajes")}
+        />
         <ValarButton
           className="homeButton"
           text="Perfil"

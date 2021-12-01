@@ -1,4 +1,4 @@
-import ValarSignUp from "@components/ValarSignUp";
+import ValarSignUp from "@components/auth/ValarSignUp";
 import { NextPage } from "next";
 
 const SignUp: NextPage = () => {

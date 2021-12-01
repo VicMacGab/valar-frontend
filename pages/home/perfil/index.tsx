@@ -1,5 +1,5 @@
-import ValarButton from "@components/ValarButton";
-import ValarModal from "@components/ValarModal";
+import ValarButton from "@components/general/ValarButton";
+import ValarModal from "@components/general/ValarModal";
 import ClientService from "@services/ClientService";
 import { AxiosError, AxiosResponse } from "axios";
 import { NextPage } from "next";

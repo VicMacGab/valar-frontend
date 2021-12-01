@@ -1,10 +1,11 @@
 import { useState } from "react";
-import ValarButton from "./ValarButton";
+import ValarButton from "../general/ValarButton";
 import { AxiosError, AxiosResponse } from "axios";
 import { Formik, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
+import ValarModal from "../general/ValarModal";
 interface SignInFormValues {
   username: string;
   password: string;
@@ -13,6 +14,9 @@ interface SignInFormValues {
 const ValarSignIn: React.FC<any> = (props) => {
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const signIn = (formValues: SignInFormValues) => {
     setIsBusy(true);
@@ -33,8 +37,17 @@ const ValarSignIn: React.FC<any> = (props) => {
       .catch((err: AxiosError) => {
         // 300-500
         console.log("Server Error: ", { err: err.response });
+        setTitle("Credenciales inválidas");
+        setBody(err.response?.data.msg);
+        setIsOpen(true);
       })
       .finally(() => setIsBusy(false));
+  };
+
+  const modalCleanup = () => {
+    setIsOpen(false);
+    setBody("");
+    setTitle("");
   };
 
   const schema = Yup.object({
@@ -48,6 +61,13 @@ const ValarSignIn: React.FC<any> = (props) => {
 
   return (
     <section className="centerOnScreenCol">
+      <ValarModal
+        title={title}
+        body={body}
+        okText={"OK"}
+        isOpen={isOpen}
+        onConfirm={modalCleanup}
+      />
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={signIn}
@@ -88,6 +108,7 @@ const ValarSignIn: React.FC<any> = (props) => {
               </div>
             )}
             <ValarButton
+              className="my-2"
               type="submit"
               text="Sign In"
               disabled={isBusy || !props.isValid}

@@ -1,4 +1,4 @@
-import ValarHeader from "@components/ValarHeader";
+import ValarHeader from "@components/general/ValarHeader";
 import "@styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/dist/client/router";

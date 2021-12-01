@@ -1,4 +1,4 @@
-import ValarSolicitarContacto from "@components/ValarSolicitarContacto";
+import ValarSolicitarContacto from "@components/contacts/ValarSolicitarContacto";
 import { NextPage } from "next";
 
 const SolicitarContacto: NextPage = () => {
