@@ -29,6 +29,32 @@ class ClientService {
       this.axiosOptions
     );
   }
+  static async sendChatRequest(body: { username: string }) {
+    return await axios.post(
+      CommonService.sendRequestUrl,
+      body,
+      this.axiosOptions
+    );
+  }
+  static async acceptChatRequest(body: { username: string }) {
+    return await axios.post(
+      CommonService.acceptRequestUrl,
+      body,
+      this.axiosOptions
+    );
+  }
+  static async getOutgoingRequests() {
+    return await axios.get(
+      CommonService.outgoingRequestsUrl,
+      this.axiosOptions
+    );
+  }
+  static async getIncomingRequests() {
+    return await axios.get(
+      CommonService.incomingRequestsUrl,
+      this.axiosOptions
+    );
+  }
 }
 
 export default ClientService;

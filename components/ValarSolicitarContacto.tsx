@@ -41,10 +41,49 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
       });
   };
 
+  const getIncomingRequests = () => {
+    ClientService.getIncomingRequests()
+      .then((res: AxiosResponse) => {
+        console.log(res);
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+      });
+  };
+
   const sendChatRequest = () => {
     console.log(`mandarle solicitud a ${username}`);
-    // TODO: mandarle solicitud al usuario
-    modalCleanup();
+    ClientService.sendChatRequest({ username })
+      .then((res: AxiosResponse) => {
+        console.group("Server Response");
+        console.log(res);
+        console.groupEnd();
+        setModalTitle(`¡Solicitud a '${username}' enviada!`);
+        setModalBody("Podrás enviar un mensaje cuando te haya aceptado.");
+      })
+      .catch((err: AxiosError) => {
+        console.group("Server Error");
+        console.log(err.response);
+        console.groupEnd();
+        setModalTitle(`¡Error!`);
+        setModalBody("Intentalo nuevamente.");
+        setUsernameNotFound(true);
+      })
+      .finally(() => {
+        setModalIsOpen(true);
+      });
+    //modalCleanup();
+  };
+
+  const acceptChatRequest = () => {
+    // TODO generalizar
+    ClientService.acceptChatRequest({ username: "mrmm" })
+      .then((res: AxiosResponse) => {
+        console.log(res);
+      })
+      .catch((err: AxiosError) => {
+        console.log(err.response);
+      });
   };
 
   const modalCleanup = () => {
@@ -88,11 +127,25 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
         <ValarButton
           className="flex-small"
           text="Buscar"
-          disabled={username.length < 2}
+          disabled={username.length < 4}
           secondary
           onClick={searchByUsername}
         />
       </div>
+      <ValarButton
+        className="flex-small"
+        text="Ver solicitudes entrantes"
+        //disabled={username.length < 2}
+        secondary
+        onClick={getIncomingRequests}
+      />
+      <ValarButton
+        className="flex-small"
+        text="Aceptar solicitud"
+        //disabled={username.length < 2}
+        secondary
+        onClick={acceptChatRequest}
+      />
     </>
   );
 };
