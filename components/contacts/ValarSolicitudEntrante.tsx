@@ -18,6 +18,11 @@ const ValarSolicitudEntrante: React.FC<ValarSolicitudEntranteProps> = (
       </div>
       <div className="flex justify-center items-center p-2">
         <BsCheckCircle
+          // 1x - 14px
+          // 2x - 28px
+          // 3x - 42px
+          // 4x - 56px
+          // 5x - 70px
           size={28}
           title="Aceptar Solicitud"
           className="cursor-pointer hover:text-green-700"

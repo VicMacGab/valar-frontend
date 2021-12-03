@@ -105,40 +105,44 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
           onCancel={() => modalCleanup()}
         />
       )}
-      <div className="centeredRowSpaceBetween searchContainerWidth solicitarContactoContainer">
-        <input
-          className="flex-big valarSearchInput"
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setUsername(e.currentTarget.value)
-          }
-        />
-        <ValarButton
-          className="flex-small my-2"
-          text="Buscar"
-          disabled={username.length < 4}
-          secondary
-          onClick={searchByUsername}
-        />
+      <div className="flex flex-col justify-start items-stretch gap-4">
+        <div className="flex justify-around items-stretch">
+          <input
+            className="flex-big valarSearchInput pl-2"
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUsername(e.currentTarget.value)
+            }
+          />
+          <ValarButton
+            className="flex-small"
+            text="Buscar"
+            disabled={username.length < 4}
+            secondary
+            onClick={searchByUsername}
+          />
+        </div>
+        <div className="flex justify-around items-stretch">
+          <ValarButton
+            className="flex-small hover:bg-red-800 border-2 border-r-2 border-red-600"
+            text="Ver solicitudes entrantes"
+            secondary
+            onClick={() =>
+              router.push("/home/solicitarContacto/solicitudes/entrantes")
+            }
+          />
+          <ValarButton
+            className="flex-small hover:bg-red-800 border-2 border-l-2 border-red-600"
+            text="Ver solicitudes pendientes"
+            secondary
+            onClick={() =>
+              router.push("/home/solicitarContacto/solicitudes/pendientes")
+            }
+          />
+        </div>
       </div>
-      <ValarButton
-        className="flex-small"
-        text="Ver solicitudes entrantes"
-        secondary
-        onClick={() =>
-          router.push("/home/solicitarContacto/solicitudes/entrantes")
-        }
-      />
-      <ValarButton
-        className="flex-small"
-        text="Ver solicitudes pendientes"
-        secondary
-        onClick={() =>
-          router.push("/home/solicitarContacto/solicitudes/pendientes")
-        }
-      />
     </>
   );
 };

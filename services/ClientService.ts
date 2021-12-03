@@ -43,6 +43,13 @@ class ClientService {
       this.axiosOptions
     );
   }
+  static async declineChatRequest(body: { username: string }) {
+    return await axios.post(
+      CommonService.declineRequestUrl,
+      body,
+      this.axiosOptions
+    );
+  }
   static async getOutgoingRequests() {
     return await axios.get(
       CommonService.outgoingRequestsUrl,

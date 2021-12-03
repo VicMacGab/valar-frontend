@@ -8,6 +8,8 @@ class CommonService {
     CommonService.baseUrl + "/requests/send";
   static readonly acceptRequestUrl: string =
     CommonService.baseUrl + "/requests/accept";
+  static readonly declineRequestUrl: string =
+    CommonService.baseUrl + "/requests/decline";
   static readonly outgoingRequestsUrl: string =
     CommonService.baseUrl + "/requests/sent";
   static readonly incomingRequestsUrl: string =
