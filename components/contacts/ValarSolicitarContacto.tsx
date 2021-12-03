@@ -21,6 +21,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
     // TODO: caso cuando el servidor dice que ya le mandaste solicitud a ese username
     // TODO: caso cuando el servidor dice que esa persona ya te agregó
     // TODO: caso cuando el servidor dice que ya es tu contacto
+    // TODO: poner un loader
 
     ClientService.findUserByUsername(username)
       .then((res: AxiosResponse) => {
@@ -54,6 +55,8 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
   // };
 
   const sendChatRequest = () => {
+    setModalIsOpen(false);
+    setUsernameNotFound(true);
     console.log(`mandarle solicitud a ${username}`);
     ClientService.sendChatRequest({ username })
       .then((res: AxiosResponse) => {
@@ -69,7 +72,6 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
         console.groupEnd();
         setModalTitle(`¡Error!`);
         setModalBody("Intentalo nuevamente.");
-        setUsernameNotFound(true);
       })
       .finally(() => {
         setModalIsOpen(true);
