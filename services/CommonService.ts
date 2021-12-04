@@ -1,21 +1,29 @@
 class CommonService {
   static readonly baseUrl: string = process.env.BACKEND_URL!;
-  static readonly signinUrl: string = CommonService.baseUrl + "/auth/signin";
-  static readonly signupUrl: string = CommonService.baseUrl + "/auth/signup";
-  static readonly authCodeUrl: string = CommonService.baseUrl + "/auth/code";
-  static readonly logoutUrl: string = CommonService.baseUrl + "/auth/logout";
-  static readonly sendRequestUrl: string =
-    CommonService.baseUrl + "/requests/send";
+
+  static readonly authUrl: string = CommonService.baseUrl + "/auth";
+  static readonly signinUrl: string = CommonService.authUrl + "/signin";
+  static readonly signupUrl: string = CommonService.authUrl + "/signup";
+  static readonly authCodeUrl: string = CommonService.authUrl + "/code";
+  static readonly logoutUrl: string = CommonService.authUrl + "/logout";
+
+  static readonly requestsUrl: string = CommonService.baseUrl + "/requests";
+
+  static readonly sendRequestUrl: string = CommonService.requestsUrl + "/send";
   static readonly acceptRequestUrl: string =
-    CommonService.baseUrl + "/requests/accept";
+    CommonService.requestsUrl + "/accept";
   static readonly declineRequestUrl: string =
-    CommonService.baseUrl + "/requests/decline";
+    CommonService.requestsUrl + "/decline";
   static readonly outgoingRequestsUrl: string =
-    CommonService.baseUrl + "/requests/sent";
+    CommonService.requestsUrl + "/sent";
   static readonly incomingRequestsUrl: string =
-    CommonService.baseUrl + "/requests/received";
+    CommonService.requestsUrl + "/received";
+
   static readonly searchUserByUsernameUrl: string =
     CommonService.baseUrl + "/user";
+  static readonly chatsUrl: string = CommonService.baseUrl + "/chats";
+  static readonly getAllChatsUrl: string = CommonService.chatsUrl + "/all";
+  static readonly getChatByIdUrl: string = CommonService.chatsUrl;
 }
 
 export default CommonService;
