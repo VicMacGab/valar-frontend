@@ -7,7 +7,10 @@ import { IoArrowBackCircleOutline } from "react-icons/io5";
 interface ValarChatProps {
   me: string;
   friend: string;
-  chat: Chat;
+  chat: {
+    _id: string;
+    messages: Message[];
+  };
   onGoBack: () => void;
 }
 
@@ -28,7 +31,7 @@ const ValarChat: React.FC<ValarChatProps> = (props) => {
       <div className="block chat mt-2">
         {/* TODO: chequear si es mi mensaje */}
         {props.chat.messages.map((msg: Message) => {
-          msg.fromMe = !!Math.round(Math.random());
+          msg.fromMe = msg.usernameFrom == props.me;
           return <ValarMessage key={msg._id} msg={msg} />;
         })}
       </div>

@@ -6,6 +6,11 @@ import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
 import { useState } from "react";
 import ValarModal from "../general/ValarModal";
+import {
+  MAX_PASSWORD_SIZE,
+  MIN_USERNAME_SIZE,
+  SECURE_PASSWORD_REGEX,
+} from "@utils/constants/general";
 interface SignUpFormValues {
   username: string;
   email: string;
@@ -20,10 +25,7 @@ const ValarSignUp: React.FC<any> = (props) => {
 
   const router = useRouter();
 
-  const signUp = (
-    formValues: SignUpFormValues,
-    actions: FormikHelpers<SignUpFormValues>
-  ) => {
+  const signUp = (formValues: SignUpFormValues) => {
     setIsBusy(true);
     console.log("user sign up", {
       username: formValues.username,
@@ -56,15 +58,19 @@ const ValarSignUp: React.FC<any> = (props) => {
   const schema = Yup.object({
     username: Yup.string()
       .required("Este campo es obligatorio.")
-      .min(4, "El username debe tener 4 carateres como mínimo."),
+      .min(MIN_USERNAME_SIZE, "El username debe tener 4 carateres como mínimo.")
+      .max(
+        MAX_PASSWORD_SIZE,
+        "El username debe tener como máximo 32 caracteres."
+      ),
     email: Yup.string()
       .required("Este campo es obligatorio.")
       .email("Debe ser un email válido."),
     password: Yup.string()
       .required("Este campo es obligatorio.")
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-        "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula y un número."
+        SECURE_PASSWORD_REGEX,
+        "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y máximo 64 caracteres."
       ),
   });
 

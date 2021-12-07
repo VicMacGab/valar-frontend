@@ -1,268 +1,87 @@
 // NOTE: lista de chats, hace click en uno y le mando un request para obtener todos los mensajes de ese chat
 
 import ValarButton from "@components/general/ValarButton";
+import ClientService from "@services/ClientService";
 import { Chat } from "@utils/interfaces/Chat";
 import { Message } from "@utils/interfaces/Message";
+import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ValarChat from "./ValarChat";
 import ValarChatBottomBar from "./ValarChatBottomBar";
 import ValarChatPreview from "./ValarChatPreview";
 
-const messages: Message[] = [
-  {
-    _id: "1",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "2",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "3",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "4",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "5",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "6",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "7",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "8",
-    usernameFrom: "mrmm",
-    content:
-      "mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3 mensaje 3",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "9",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "10",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "11",
-    usernameFrom: "mrmm",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "12",
-    usernameFrom: "mrmm",
-    content: "mensaje 2",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "13",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "14",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "15",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "16",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "17",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "18",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "19",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "20",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-  {
-    _id: "21",
-    usernameFrom: "a",
-    content: "mensaje 1",
-    edited: false,
-    deleted: false,
-  },
-];
-
-const chats: Chat[] = [
-  {
-    _id: "1",
-    user1: "mrmm",
-    user2: "a",
-    messages,
-  },
-  {
-    _id: "2",
-    user1: "mrmm",
-    user2: "b",
-    messages,
-  },
-  {
-    _id: "3",
-    user1: "mrmm",
-    user2: "c",
-    messages,
-  },
-  {
-    _id: "4",
-    user1: "mrmm",
-    user2: "d",
-    messages,
-  },
-  {
-    _id: "5",
-    user1: "mrmm",
-    user2: "e",
-    messages,
-  },
-  {
-    _id: "6",
-    user1: "mrmm",
-    user2: "f",
-    messages,
-  },
-  {
-    _id: "7",
-    user1: "mrmm",
-    user2: "g",
-    messages,
-  },
-  {
-    _id: "8",
-    user1: "mrmm",
-    user2: "h",
-    messages,
-  },
-  {
-    _id: "9",
-    user1: "mrmm",
-    user2: "i",
-    messages,
-  },
-  {
-    _id: "10",
-    user1: "mrmm",
-    user2: "j",
-    messages,
-  },
-  {
-    _id: "11",
-    user1: "mrmm",
-    user2: "k",
-    messages,
-  },
-  {
-    _id: "12",
-    user1: "mrmm",
-    user2: "l",
-    messages,
-  },
-  {
-    _id: "13",
-    user1: "mrmm",
-    user2: "m",
-    messages,
-  },
-  {
-    _id: "14",
-    user1: "mrmm",
-    user2: "n",
-    messages,
-  },
-];
-
 const ValarChats: React.FC<{}> = (props) => {
-  const [currentChat, setCurrentChat] = useState<Chat | undefined>(undefined);
-  const [me, setMe] = useState("mrmm");
+  // TODO: lo de manejar a quién le pertenece cada mensaje
+  const [currentChat, setCurrentChat] = useState<
+    { _id: string; messages: Message[] } | undefined
+  >(undefined);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [chatsError, setChatsError] = useState("");
+  const [me, setMe] = useState("");
   const [friend, setFriend] = useState("");
   const [contactsMode, setContactsMode] = useState(true);
 
-  // TODO: get chats and setMe
-
-  const getDummyChat = (chatId: string): Chat => {
-    return chats.find((chat) => chat._id === chatId)!;
-  };
+  useEffect(() => {
+    ClientService.getAllChats()
+      .then((res: AxiosResponse) => {
+        console.group("Get All Chats");
+        console.log(res);
+        console.groupEnd();
+        setChats(res.data.chats.chats);
+      })
+      .catch((err: AxiosError) => {
+        console.group("Get All Chats Err");
+        console.log(err);
+        console.groupEnd();
+        setChatsError(err.response?.data.msg);
+      });
+  }, []);
 
   const showChat = (chatId: string, friend: string) => {
     // TODO: chapar el chat actual del server y chapar quien soy
-    setFriend(friend);
-    setCurrentChat(getDummyChat(chatId));
+    // TODO: get chats and setMe
+
+    ClientService.getChatById(chatId)
+      .then((res: AxiosResponse) => {
+        console.group("Get Chat By Id Res");
+        console.log(res);
+        console.groupEnd();
+        setFriend(friend);
+        setMe(res.data.me);
+        setCurrentChat({
+          _id: res.data.chat._id,
+          messages: res.data.chat.messages,
+        });
+      })
+      .catch((err: AxiosError) => {
+        console.group("Get Chat By Id Err");
+        console.log(err);
+        console.groupEnd();
+      });
+  };
+
+  const getUsername = (chat: Chat): string => {
+    if (chat.chatId.user1) {
+      return chat.chatId.user1.username;
+    } else if (chat.chatId.user2) {
+      return chat.chatId.user2.username;
+    } else {
+      return "not found";
+    }
+  };
+
+  const sendMessage = (content: string) => {
+    ClientService.sendMessage(currentChat!._id, {
+      usernameFrom: me,
+      content: content,
+    })
+      .then((res: AxiosResponse) => console.log("msg saved successfully"))
+      .catch((err: AxiosError) => {
+        console.group("Error Sending Msg");
+        console.log(err);
+        console.groupEnd();
+      });
   };
 
   return (
@@ -273,16 +92,22 @@ const ValarChats: React.FC<{}> = (props) => {
             !contactsMode ? "dissapearsWhenChatTight" : ""
           } chatList m-3 max-w-full overflow-y-scroll`}
         >
-          {chats.map((chat: Chat) => (
-            <ValarChatPreview
-              key={chat._id}
-              username={chat.user2 as string}
-              onClick={() => {
-                setContactsMode(false);
-                showChat(chat._id, chat.user2 as string);
-              }}
-            />
-          ))}
+          {chatsError ? (
+            <div className="flex justify-center items-center bg-valar-secondary text-white">
+              {chatsError}
+            </div>
+          ) : (
+            chats.map((chat: Chat) => (
+              <ValarChatPreview
+                key={chat.chatId._id}
+                username={getUsername(chat)}
+                onClick={() => {
+                  // setContactsMode(false);
+                  showChat(chat.chatId._id, getUsername(chat));
+                }}
+              />
+            ))
+          )}
         </div>
         {currentChat && (
           <div
@@ -299,9 +124,7 @@ const ValarChats: React.FC<{}> = (props) => {
               />
             </div>
             <div className="flex justify-center items-stretch border-2 border-solid border-gray-600">
-              <ValarChatBottomBar
-                onSend={(text) => console.log("send msg: ", text)}
-              />
+              <ValarChatBottomBar onSend={sendMessage} />
             </div>
           </div>
         )}

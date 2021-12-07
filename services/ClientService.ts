@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { SignInDTO } from "@utils/dtos/SignIn";
 import { SignUpDTO } from "@utils/dtos/SignUp";
 import CommonService from "@services/CommonService";
+import { Message } from "@utils/interfaces/Message";
 
 class ClientService {
   private static axiosOptions: AxiosRequestConfig = {
@@ -59,6 +60,23 @@ class ClientService {
   static async getIncomingRequests() {
     return await axios.get(
       CommonService.incomingRequestsUrl,
+      this.axiosOptions
+    );
+  }
+  static async getAllChats() {
+    return await axios.get(CommonService.getAllChatsUrl, this.axiosOptions);
+  }
+  static async getChatById(chatId: string) {
+    return await axios.post(
+      CommonService.getChatByIdUrl,
+      { chatId },
+      this.axiosOptions
+    );
+  }
+  static async sendMessage(chatId: string, message: Message) {
+    return await axios.put(
+      CommonService.chatsUrl,
+      { chatId: chatId, message: message },
       this.axiosOptions
     );
   }

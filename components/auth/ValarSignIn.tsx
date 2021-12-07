@@ -6,6 +6,12 @@ import * as Yup from "yup";
 import { useRouter } from "next/dist/client/router";
 import ClientService from "services/ClientService";
 import ValarModal from "../general/ValarModal";
+import {
+  MAX_PASSWORD_SIZE,
+  MAX_USERNAME_SIZE,
+  MIN_PASSWORD_SIZE,
+  MIN_USERNAME_SIZE,
+} from "@utils/constants/general";
 interface SignInFormValues {
   username: string;
   password: string;
@@ -53,10 +59,15 @@ const ValarSignIn: React.FC<any> = (props) => {
   const schema = Yup.object({
     username: Yup.string()
       .required("Este campo es obligatorio.")
-      .min(4, "El username debe tener 4 carateres como mínimo."),
+      .min(MIN_USERNAME_SIZE, "El username tiene 4 carateres como mínimo.")
+      .max(MAX_USERNAME_SIZE, "El username tiene máximo 32 caracteres."),
     password: Yup.string()
       .required("Este campo es obligatorio.")
-      .min(8, "La contraseña debe tener 8 caracteres como mínimo."),
+      .min(
+        MIN_PASSWORD_SIZE,
+        "La contraseña debe tener 8 caracteres como mínimo."
+      )
+      .max(MAX_PASSWORD_SIZE, "La contraseña tiene como máximo 64 caracteres."),
   });
 
   return (
