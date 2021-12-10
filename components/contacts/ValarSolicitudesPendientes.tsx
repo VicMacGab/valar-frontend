@@ -73,7 +73,7 @@ const ValarSolicitudesPendientes: React.FC<{}> = (props) => {
   return (
     <div className="mt-20 pt-3 w-screen h-screen flex flex-col justify-start items-center">
       <h1 className="text-3xl my-4 pb-2 border-b-2 border-red-900">
-        Solicitudes Entrantes
+        Solicitudes Pendientes
       </h1>
       {loading && <h2>Obteniendo solicitudes entrantes...</h2>}
       {!loading && !error && outgoingRequests.length == 0 && (

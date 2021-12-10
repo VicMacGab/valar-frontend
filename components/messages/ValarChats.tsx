@@ -11,12 +11,20 @@ import ValarChat from "./ValarChat";
 import ValarChatBottomBar from "./ValarChatBottomBar";
 import ValarChatPreview from "./ValarChatPreview";
 
+interface ChatPreview {
+  chat: string;
+  user: {
+    _id: string;
+    username: string;
+  };
+}
+
 const ValarChats: React.FC<{}> = (props) => {
   // TODO: lo de manejar a quién le pertenece cada mensaje
   const [currentChat, setCurrentChat] = useState<
     { _id: string; messages: Message[] } | undefined
   >(undefined);
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<ChatPreview[]>([]);
   const [chatsError, setChatsError] = useState("");
   const [me, setMe] = useState("");
   const [friend, setFriend] = useState("");
@@ -61,16 +69,6 @@ const ValarChats: React.FC<{}> = (props) => {
       });
   };
 
-  const getUsername = (chat: Chat): string => {
-    if (chat.chatId.user1) {
-      return chat.chatId.user1.username;
-    } else if (chat.chatId.user2) {
-      return chat.chatId.user2.username;
-    } else {
-      return "not found";
-    }
-  };
-
   const sendMessage = (content: string) => {
     ClientService.sendMessage(currentChat!._id, {
       usernameFrom: me,
@@ -97,13 +95,13 @@ const ValarChats: React.FC<{}> = (props) => {
               {chatsError}
             </div>
           ) : (
-            chats.map((chat: Chat) => (
+            chats.map((chat: ChatPreview) => (
               <ValarChatPreview
-                key={chat.chatId._id}
-                username={getUsername(chat)}
+                key={chat.user._id}
+                username={chat.user.username}
                 onClick={() => {
                   // setContactsMode(false);
-                  showChat(chat.chatId._id, getUsername(chat));
+                  showChat(chat.chat, chat.user.username);
                 }}
               />
             ))

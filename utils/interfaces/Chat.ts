@@ -2,7 +2,7 @@ import { Message } from "./Message";
 import { User } from "./User";
 
 export interface Chat {
-  chatId: {
+  chat: {
     _id: string;
     user1?: {
       _id: string;

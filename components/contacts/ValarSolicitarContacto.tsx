@@ -71,7 +71,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
         console.log(err.response);
         console.groupEnd();
         setModalTitle(`¡Error!`);
-        setModalBody("Intentalo nuevamente.");
+        setModalBody(err.response?.data.msg);
       })
       .finally(() => {
         setModalIsOpen(true);
