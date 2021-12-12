@@ -1,5 +1,6 @@
 class CommonService {
   static readonly baseUrl: string = process.env.BACKEND_URL!;
+  static readonly wsUrl: string = process.env.WS_URL!;
 
   static readonly authUrl: string = CommonService.baseUrl + "/auth";
   static readonly signinUrl: string = CommonService.authUrl + "/signin";

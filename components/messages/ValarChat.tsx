@@ -15,15 +15,14 @@ interface ValarChatProps {
 }
 
 const ValarChat: React.FC<ValarChatProps> = (props) => {
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, []);
-
   // TODO: editar mensaje
   // TODO: poner la hora del mensaje con un position absolute
 
   return (
-    <div className="flex flex-col justify-center items-stretch relative pb-">
+    <div
+      id="chatContainer"
+      className="flex flex-col justify-center items-stretch relative pb-"
+    >
       <h1 className="text-center font-black py-1 sticky top-0 secondaryBackground text-white border-red-400 border-2">
         {props.friend}
         <IoArrowBackCircleOutline

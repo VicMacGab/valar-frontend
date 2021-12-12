@@ -5,7 +5,6 @@ interface ValarMessageProps {
 }
 
 const ValarMessage: React.FC<ValarMessageProps> = (props) => {
-  console.log("received message: ", props.msg);
   return (
     <div
       className={`chat-message ${
