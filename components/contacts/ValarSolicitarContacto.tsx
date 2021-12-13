@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/dist/client/router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import ClientService from "services/ClientService";
 import ValarButton from "../general/ValarButton";
@@ -13,6 +13,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
   const [modalBody, setModalBody] = useState("");
   const [usernameNotFound, setUsernameNotFound] = useState(false);
   const router = useRouter();
+  const sendingRequest = useRef<boolean>(false);
 
   const searchByUsername = () => {
     console.log("searching for user: ", username);
@@ -55,28 +56,31 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
   // };
 
   const sendChatRequest = () => {
-    setModalIsOpen(false);
-    setUsernameNotFound(true);
-    console.log(`mandarle solicitud a ${username}`);
-    ClientService.sendChatRequest({ username })
-      .then((res: AxiosResponse) => {
-        console.group("Server Response");
-        console.log(res);
-        console.groupEnd();
-        setModalTitle(`¡Solicitud a '${username}' enviada!`);
-        setModalBody("Podrás enviar un mensaje cuando te haya aceptado.");
-      })
-      .catch((err: AxiosError) => {
-        console.group("Server Error");
-        console.log(err.response);
-        console.groupEnd();
-        setModalTitle(`¡Error!`);
-        setModalBody(err.response?.data.msg);
-      })
-      .finally(() => {
-        setModalIsOpen(true);
-      });
-    //modalCleanup();
+    if (!sendingRequest.current) {
+      sendingRequest.current = true;
+      setModalIsOpen(false);
+      setUsernameNotFound(true);
+      console.log(`mandarle solicitud a ${username}`);
+      ClientService.sendChatRequest({ username })
+        .then((res: AxiosResponse) => {
+          console.group("Server Response");
+          console.log(res);
+          console.groupEnd();
+          setModalTitle(`¡Solicitud a '${username}' enviada!`);
+          setModalBody("Podrás enviar un mensaje cuando te haya aceptado.");
+        })
+        .catch((err: AxiosError) => {
+          console.group("Server Error");
+          console.log(err.response);
+          console.groupEnd();
+          setModalTitle(`¡Error!`);
+          setModalBody(err.response?.data.msg);
+        })
+        .finally(() => {
+          sendingRequest.current = false;
+          setModalIsOpen(true);
+        });
+    }
   };
 
   const modalCleanup = () => {
@@ -94,8 +98,8 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
           body={modalBody}
           okText={"Enviar"}
           cancelText={"Ahorita No"}
-          onConfirm={() => sendChatRequest()}
-          onCancel={() => modalCleanup()}
+          onConfirm={sendChatRequest}
+          onCancel={modalCleanup}
         />
       )}
       {modalIsOpen && usernameNotFound && (
