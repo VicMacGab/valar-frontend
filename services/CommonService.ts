@@ -25,6 +25,8 @@ class CommonService {
   static readonly chatsUrl: string = CommonService.baseUrl + "/chats";
   static readonly getAllChatsUrl: string = CommonService.chatsUrl + "/all";
   static readonly getChatByIdUrl: string = CommonService.chatsUrl;
+  static readonly editMessageUrl: string =
+    CommonService.chatsUrl + "/editMessage";
 }
 
 export default CommonService;

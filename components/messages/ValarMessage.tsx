@@ -11,6 +11,7 @@ const ValarMessage: React.FC<ValarMessageProps> = (props) => {
     .slice(0, 5);
   console.log(time);
   const [editing, setEditing] = useState(false);
+  const [text, setText] = useState("");
   return (
     <div
       className={`chat-message ${
@@ -26,7 +27,7 @@ const ValarMessage: React.FC<ValarMessageProps> = (props) => {
       }}
       onBlur={() => {
         setEditing(false);
-        // editar en la BD y chequear en la BD que sea un mensaje que YO mande
+        //editMessage(content: string, messageId: string)
       }}
     >
       {props.msg.content}

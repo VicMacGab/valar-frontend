@@ -76,7 +76,14 @@ class ClientService {
   static async sendMessage(chatId: string, message: Message) {
     return await axios.put(
       CommonService.chatsUrl,
-      { chatId: chatId, message: message },
+      { chatId, message },
+      this.axiosOptions
+    );
+  }
+  static async editMessage(content: string, messageId: string) {
+    return await axios.put(
+      CommonService.editMessageUrl,
+      { content, messageId },
       this.axiosOptions
     );
   }

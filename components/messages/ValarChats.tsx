@@ -137,6 +137,7 @@ const ValarChats: React.FC<{}> = (props) => {
             currentChat.current!.messages.push({
               ...newMsg,
               _id: response._id,
+              timestamp: response.timestamp,
             });
             forceUpdate();
           }
