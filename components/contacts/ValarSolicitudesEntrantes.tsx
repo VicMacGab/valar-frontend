@@ -142,7 +142,7 @@ const ValarSolicitudesEntrantes: React.FC<{}> = (props) => {
         </h1>
         {loading && <h2>Obteniendo solicitudes entrantes...</h2>}
         {!loading && !error && incomingRequests.length == 0 && (
-          <h6 className="text-xl">No tienes solicitudes entrantes.</h6>
+          <h6 className="text-xl">No tienes solicitudes .</h6>
         )}
         {!loading && !error && incomingRequests.length > 0 && (
           <div className="w-solicitudes">

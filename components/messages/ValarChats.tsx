@@ -160,7 +160,7 @@ const ValarChats: React.FC<{}> = (props) => {
                 key={chat.user._id}
                 username={chat.user.username}
                 onClick={() => {
-                  // setContactsMode(false);
+                  setContactsMode(false);
                   showChat(chat.chat, chat.user.username);
                 }}
               />

@@ -75,7 +75,7 @@ const ValarSolicitudesPendientes: React.FC<{}> = (props) => {
       <h1 className="text-3xl my-4 pb-2 border-b-2 border-red-900">
         Solicitudes Pendientes
       </h1>
-      {loading && <h2>Obteniendo solicitudes entrantes...</h2>}
+      {loading && <h2>Obteniendo solicitudes pendientes...</h2>}
       {!loading && !error && outgoingRequests.length == 0 && (
         <h6 className="text-xl">No has mandado ninguna solicitud.</h6>
       )}
