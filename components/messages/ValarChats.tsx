@@ -38,6 +38,7 @@ const ValarChats: React.FC<{}> = (props) => {
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
+    // TODO: pasar lógica a un servicio
     if (socket.current === undefined) {
       socket.current = io(CommonService.wsUrl, {
         transports: ["websocket"],
@@ -51,6 +52,7 @@ const ValarChats: React.FC<{}> = (props) => {
           console.log("server done initializing");
 
           socket.current!.on("connect_error", (err) => {
+            // TODO: mandarle request al endpoint de logout y router.push('/')
             console.log("error connnecting to ws: ", err.message);
           });
 
@@ -61,16 +63,24 @@ const ValarChats: React.FC<{}> = (props) => {
           socket.current!.on("message", (msg: Message) => {
             console.log("received message from server: ", msg);
             if (currentChat.current) {
-              currentChat.current = {
-                _id: currentChat.current?._id,
-                messages: [...currentChat.current?.messages, msg],
-              };
+              currentChat.current.messages.push(msg);
               forceUpdate();
+            } else {
+              // TODO: acá se debería subir el chat que acaba el emitir el mensaje
+              console.error(
+                "se recibió un mensaje pero no hay current chat seleccionado"
+              );
             }
           });
         });
       });
     }
+    // cuando el componente se desmonte, hay que cerrar el socket
+    return () => {
+      if (socket.current !== undefined) {
+        socket.current.close();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -108,8 +118,13 @@ const ValarChats: React.FC<{}> = (props) => {
   };
 
   const sendMessage = (destination: string, content: string): void => {
+    // TODO: mandar el chatId
     if (socket.current!.connected) {
-      const newMsg = { usernameFrom: me, content: content };
+      const newMsg = {
+        usernameFrom: me,
+        content: content,
+        chatId: currentChat.current?._id,
+      };
       socket.current!.emit(
         "message",
         newMsg,
@@ -119,13 +134,10 @@ const ValarChats: React.FC<{}> = (props) => {
             console.log("error when sending message: ", response.error);
           } else {
             console.warn("msg sent with _id: ", response._id);
-            currentChat.current = {
-              _id: currentChat.current!._id,
-              messages: [
-                ...currentChat.current!.messages,
-                { ...newMsg, _id: response._id },
-              ],
-            };
+            currentChat.current!.messages.push({
+              ...newMsg,
+              _id: response._id,
+            });
             forceUpdate();
           }
         }
