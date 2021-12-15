@@ -87,6 +87,13 @@ class ClientService {
       this.axiosOptions
     );
   }
+  static async deleteMessage(messageId: string) {
+    return await axios.put(
+      CommonService.deleteMessageUrl,
+      { messageId },
+      this.axiosOptions
+    );
+  }
 }
 
 export default ClientService;

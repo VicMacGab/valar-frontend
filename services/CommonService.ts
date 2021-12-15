@@ -27,6 +27,8 @@ class CommonService {
   static readonly getChatByIdUrl: string = CommonService.chatsUrl;
   static readonly editMessageUrl: string =
     CommonService.chatsUrl + "/editMessage";
+  static readonly deleteMessageUrl: string =
+    CommonService.chatsUrl + "/deleteMessage";
 }
 
 export default CommonService;

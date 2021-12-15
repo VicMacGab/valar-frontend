@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      fontSize: {
+        xxs: ".5rem",
+      },
       colors: {
         "valar-primary": "#8b1a10",
         "valar-secondary": "#434343",

@@ -15,6 +15,7 @@ export function middleware(
   const valarSession = cookies["valarSession"];
 
   if (!valarSession) {
+    console.warn("no valarSession cookie present");
     return NextResponse.redirect("/");
   }
 
@@ -25,7 +26,7 @@ export function middleware(
 
   // cookie has been tampered
   if (unsignedCookie === false || unsignedCookie === valarSession) {
-    console.log("valarSession cookie has been tampered");
+    console.warn("valarSession cookie has been tampered");
     return NextResponse.redirect("/").clearCookie("valarSession");
   } else {
     return res;

@@ -10,6 +10,10 @@ import { io, Socket } from "socket.io-client";
 import { MessageAck } from "@utils/interfaces/MessageAck";
 import { Chat } from "@utils/interfaces/Chat";
 import ValarModal from "@components/general/ValarModal";
+import Image from "next/image";
+import { useForceUpdate } from "@utils/hooks/forceUpdate";
+import { EditedMessage } from "@utils/interfaces/EditedMessage";
+import { DeletedMessage } from "@utils/interfaces/DeletedMessage";
 
 interface ChatPreview {
   chat: string;
@@ -18,12 +22,6 @@ interface ChatPreview {
     username: string;
   };
 }
-
-// TODO: mover a utils/hooks
-const useForceUpdate = () => {
-  const [value, setValue] = useState(0);
-  return () => setValue((value) => value + 1);
-};
 
 const ValarChats: React.FC<{}> = (props) => {
   // TODO: lo de manejar a quién le pertenece cada mensaje
@@ -39,11 +37,12 @@ const ValarChats: React.FC<{}> = (props) => {
 
   useEffect(() => {
     // TODO: pasar lógica a un servicio
+    // TODO: nombres de los eventos deberian esta en CommonService o en el servico nuevo
     if (socket.current === undefined) {
       socket.current = io(CommonService.wsUrl, {
         transports: ["websocket"],
         withCredentials: true,
-      }); // connecting to valar backend
+      });
 
       socket.current!.on("connect", () => {
         socket.current!.sendBuffer = [];
@@ -60,6 +59,10 @@ const ValarChats: React.FC<{}> = (props) => {
             console.log("error sending message: ", err);
           });
 
+          // FIXME: si alguien mas me manda mensaje, se van a renderizar mis mensajes con otra persona cuando no deberia
+          // FIXME: estos updates estan mal, solo se deberia rerenderizar el mensaje que cambió, no todos los mensajes. Para ello:
+          // TODO: Redux
+
           socket.current!.on("message", (msg: Message) => {
             console.log("received message from server: ", msg);
             if (currentChat.current) {
@@ -70,6 +73,20 @@ const ValarChats: React.FC<{}> = (props) => {
               console.error(
                 "se recibió un mensaje pero no hay current chat seleccionado"
               );
+            }
+          });
+
+          socket.current!.on("peerMessageEdit", (msg: EditedMessage) => {
+            if (currentChat.current) {
+              currentChat.current.messages[msg.msgIdx].edited = true;
+              currentChat.current.messages[msg.msgIdx].content = msg.newContent;
+              forceUpdate();
+            }
+          });
+          socket.current!.on("peerMessageDelete", (msg: DeletedMessage) => {
+            if (currentChat.current) {
+              currentChat.current.messages[msg.msgIdx].deleted = true;
+              forceUpdate();
             }
           });
         });
@@ -117,35 +134,53 @@ const ValarChats: React.FC<{}> = (props) => {
       });
   };
 
-  const sendMessage = (destination: string, content: string): void => {
-    // TODO: mandar el chatId
+  const sendMessage = (content: string): void => {
     if (socket.current!.connected) {
       const newMsg = {
         usernameFrom: me,
         content: content,
         chatId: currentChat.current?._id,
       };
-      socket.current!.emit(
-        "message",
-        newMsg,
-        { destination: destination },
-        (response: MessageAck) => {
-          if (!response.ok) {
-            console.log("error when sending message: ", response.error);
-          } else {
-            console.warn("msg sent with _id: ", response._id);
-            currentChat.current!.messages.push({
-              ...newMsg,
-              _id: response._id,
-              timestamp: response.timestamp,
-            });
-            forceUpdate();
-          }
+      // TODO: creo q el destination esta de más, el chatId basta
+      socket.current!.emit("message", newMsg, (response: MessageAck) => {
+        if (!response.ok) {
+          console.log("error when sending message: ", response.error);
+        } else {
+          console.log("msg sent with _id: ", response._id);
+          currentChat.current!.messages.push({
+            ...newMsg,
+            _id: response._id,
+            timestamp: response.timestamp,
+          });
+          forceUpdate();
         }
-      );
+      });
     } else {
       setModalIsOpen(true);
     }
+  };
+
+  const editMessage = (msg: EditedMessage): void => {
+    socket.current!.emit("messageEdit", msg, (ack: any) => {
+      if (ack.ok) {
+        currentChat.current!.messages[msg.msgIdx].edited = true;
+        currentChat.current!.messages[msg.msgIdx].content = msg.newContent;
+        forceUpdate();
+      } else {
+        console.error("error editing message", ack.reason);
+      }
+    });
+  };
+
+  const deleteMessage = (msg: DeletedMessage): void => {
+    socket.current!.emit("messageDelete", msg, (ack: any) => {
+      if (ack.ok) {
+        currentChat.current!.messages[msg.msgIdx].deleted = true;
+        forceUpdate();
+      } else {
+        console.error("error editing message", ack.reason);
+      }
+    });
   };
 
   return (
@@ -186,31 +221,41 @@ const ValarChats: React.FC<{}> = (props) => {
               contactsMode ? "dissapearsWhenChatTight" : ""
             } chatSingle max-w-full max-h-full flex flex-col justify-center items-stretch relative`}
           >
-            <div id="chatContainer" className="m-3 overflow-y-scroll">
+            <div id="chatContainer" className="mt-3 overflow-y-scroll">
               <ValarChat
                 onGoBack={() => setContactsMode(true)}
                 me={me}
                 friend={friend}
                 chat={currentChat.current}
+                onEditMessage={editMessage}
+                onDeleteMessage={deleteMessage}
               />
             </div>
             {/* TODO: que este anclado abajo */}
             <div className="flex justify-center items-stretch border-2 border-solid border-gray-600">
-              <ValarChatBottomBar
-                onSend={(content) =>
-                  sendMessage(currentChat.current!._id, content)
-                }
-              />
+              <ValarChatBottomBar onSend={(content) => sendMessage(content)} />
             </div>
           </div>
         )}
-        {!currentChat && (
+        {!currentChat.current && (
           <div
-            className={`${
-              contactsMode ? "dissapearsWhenChatTight" : ""
-            } chatSingle m-3 flex justify-center items-center max-w-full overflow-y-scroll`}
+            // className={`${
+            //   contactsMode ? "dissapearsWhenChatTight" : ""
+            // } chatSingle m-3 flex justify-center items-center max-w-full overflow-y-scroll`}
+            className={
+              "dissapearsWhenChatTight chatSingle m-3 flex justify-center items-center max-w-full"
+            }
           >
-            <h2>Selecciona un chat</h2>
+            <div className="flex flex-col">
+              <Image
+                src={require("../../public/favicon.png")}
+                width={50}
+                height={50}
+                objectFit="contain"
+                alt="Logo de Valar"
+              />
+              <h2 className="mt-2">Selecciona un chat</h2>
+            </div>
           </div>
         )}
       </div>
