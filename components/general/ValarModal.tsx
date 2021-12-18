@@ -9,13 +9,15 @@ import {
   ROLE,
 } from "baseui/modal";
 import { KIND } from "baseui/button";
+import { Spinner } from "baseui/spinner";
 
 interface ValarModalProps {
   title: string;
-  body: any;
+  body?: any;
   isOpen: boolean;
   okText?: string;
   cancelText?: string;
+  showLoader?: boolean;
   onCancel?: () => void;
   onConfirm?: () => void;
 }
@@ -38,7 +40,20 @@ const ValarModal: React.FC<ValarModalProps> = (props) => {
       }}
     >
       <ModalHeader>{props.title}</ModalHeader>
-      <ModalBody>{props.body}</ModalBody>
+      {!props.showLoader && <ModalBody>{props.body}</ModalBody>}
+      {props.showLoader && (
+        <ModalBody>
+          <div className="flex justify-center items-center">
+            <Spinner
+              overrides={{
+                ActivePath: {
+                  style: ({ $theme }) => ({ fill: $theme.colors.primary }),
+                },
+              }}
+            />
+          </div>
+        </ModalBody>
+      )}
       <ModalFooter>
         {props.okText && (
           <ModalButton onClick={props.onConfirm} kind={KIND.secondary}>

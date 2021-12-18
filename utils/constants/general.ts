@@ -6,3 +6,5 @@ export const MAX_PASSWORD_SIZE = 64;
 
 export const SECURE_PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
+
+export const DH_KEY_SIZE_BYTES = 256;

@@ -30,7 +30,12 @@ class ClientService {
       this.axiosOptions
     );
   }
-  static async sendChatRequest(body: { username: string }) {
+  static async sendChatRequest(body: {
+    username: string;
+    pubKey: Buffer;
+    g: Buffer;
+    p: Buffer;
+  }) {
     return await axios.post(
       CommonService.sendRequestUrl,
       body,

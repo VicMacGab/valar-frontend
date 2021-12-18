@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { User } from "@utils/interfaces/User";
 import ValarSolicitudEntrante from "./ValarSolicitudEntrante";
 import ValarModal from "@components/general/ValarModal";
+import { createDiffieHellman } from "diffie-hellman";
 
 interface IncomingRequest {
   _id: string;
@@ -21,47 +22,12 @@ const ValarSolicitudesEntrantes: React.FC<{}> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // corre cuando el componente se renderiza
     ClientService.getIncomingRequests()
       .then((res: AxiosResponse) => {
         console.group("Incoming Request Res");
         console.log(res);
         console.groupEnd();
         setIncomingRequests(res.data.incomingRequests);
-        // setIncomingRequests([
-        //   {
-        //     _id: "1",
-        //     user: {
-        //       username: "hola",
-        //       email: "",
-        //       verified: true,
-        //     },
-        //   },
-        //   {
-        //     _id: "2",
-        //     user: {
-        //       username: "holaaaa",
-        //       email: "",
-        //       verified: true,
-        //     },
-        //   },
-        //   {
-        //     _id: "3",
-        //     user: {
-        //       username: "que tal",
-        //       email: "",
-        //       verified: true,
-        //     },
-        //   },
-        //   {
-        //     _id: "4",
-        //     user: {
-        //       username: "como estas",
-        //       email: "",
-        //       verified: true,
-        //     },
-        //   },
-        // ]);
       })
       .catch((err: AxiosError) => {
         console.group("Incoming Request Err");
@@ -74,29 +40,48 @@ const ValarSolicitudesEntrantes: React.FC<{}> = (props) => {
       });
   }, []);
 
-  const acceptRequest = (username: string) => {
-    ClientService.acceptChatRequest({ username })
-      .then((res: AxiosResponse) => {
-        console.group("Accepted Request Res");
-        console.log(res);
-        console.groupEnd();
-        setTitle("Solicitud aceptada");
-        setBody(
-          `Ahora puedes chatear con ${username} en la sección de 'Mensajes'`
-        );
-        // borrar el request recien aceptado
-        setIncomingRequests((prev) => {
-          return prev.filter((req) => req.user.username !== username);
-        });
-      })
-      .catch((err: AxiosError) => {
-        console.group("Accepted Request Err");
-        console.log(err);
-        console.groupEnd();
-        setTitle("Ocurrió un error");
-        setBody("No pudimos aceptar la solicitud. Inténtalo más tarde.");
-      })
-      .finally(() => setIsOpen(true));
+  const acceptRequest = async (username: string) => {
+    // TODO: recibir g, p y pubKey del servidor
+    // TODO:
+
+    try {
+      const res = await ClientService.acceptChatRequest({ username });
+      const me = createDiffieHellman(
+        res.data.p.toString("hex"),
+        "hex",
+        res.data.g.toString("hex"),
+        "hex"
+      );
+
+      me.generateKeys();
+      const secret = me.computeSecret(res.data.peerPublicPart);
+
+      // TODO: guardar el secret en localStorage (pero luego en IndexedDB)
+
+      console.group("Accepted Request Res");
+      console.log(res);
+      console.groupEnd();
+      setTitle("Solicitud aceptada");
+      setBody(
+        `Ahora puedes chatear con ${username} en la sección de 'Mensajes'`
+      );
+      // borrar el request recien aceptado
+      setIncomingRequests((prev) => {
+        return prev.filter((req) => req.user.username !== username);
+      });
+
+      // TODO: mandarle al servidor mi parte privada (g^b mod p) para que el otro pueda calcular el 'secret'
+      // TODO: en OutGoing requests, el servidor debe decirle al que mandó el request que ya se la aceptaron, cuando haga click en 'Llevame al chat!' el servidor le manda el g^b mod p (y posiblemente otras partes) para que el cliente pueda calcular el secreto final, guardarlo y poder hablar con end-to-end encryption
+      // TODO: eso implica cambios en los controllers, en la bd y en el UI
+    } catch (error) {
+      console.group("Accepted Request Err");
+      console.log(error);
+      console.groupEnd();
+      setTitle("Ocurrió un error");
+      setBody("No pudimos aceptar la solicitud. Inténtalo más tarde.");
+    } finally {
+      setIsOpen(true);
+    }
   };
 
   const declineRequest = (username: string) => {

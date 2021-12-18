@@ -12,6 +12,8 @@
     "axios": "^0.24.0",
     "baseui": "^10.5.0",
     "cookie-parser": "^1.4.6",
+    "create-ecdh": "^4.0.4",
+    "diffie-hellman": "^5.0.3",
     "formik": "^2.2.9",
     "next": "^12.0.4",
     "react": "17.0.2",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
+    "@types/diffie-hellman": "^5.0.0",
     "@types/react": "17.0.30",
     "@types/styletron-engine-atomic": "^1.1.1",
     "@types/styletron-react": "^5.0.3",

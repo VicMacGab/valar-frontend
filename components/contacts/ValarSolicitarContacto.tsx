@@ -1,10 +1,11 @@
+import { DH_KEY_SIZE_BYTES } from "@utils/constants/general";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRouter } from "next/dist/client/router";
 import React, { useRef, useState } from "react";
-
 import ClientService from "services/ClientService";
 import ValarButton from "../general/ValarButton";
 import ValarModal from "../general/ValarModal";
+import { createDiffieHellman } from "diffie-hellman";
 
 const ValarSolicitarContacto: React.FC<{}> = (props) => {
   const [username, setUsername] = useState("");
@@ -13,6 +14,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
   const [modalBody, setModalBody] = useState("");
   const [usernameNotFound, setUsernameNotFound] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const sendingRequest = useRef<boolean>(false);
 
   const searchByUsername = () => {
@@ -45,41 +47,62 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
       });
   };
 
-  // const getIncomingRequests = () => {
-  //   ClientService.getIncomingRequests()
-  //     .then((res: AxiosResponse) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err: AxiosError) => {
-  //       console.log(err.response);
-  //     });
-  // };
+  const generateDH = (): { g: Buffer; pubKey: Buffer; p: Buffer } => {
+    const alice = createDiffieHellman(DH_KEY_SIZE_BYTES);
+    console.log("created diffie hellman");
+    const pubKey = alice.generateKeys();
+    console.log("got pub key");
+    const p = alice.getPrime();
+    console.log("got prime");
+    const g = alice.getGenerator();
+    console.log("got generator");
+    console.log("pubKey: ", pubKey);
+    console.log("p: ", p);
+    console.log("g: ", g);
+    return { g, pubKey, p };
+  };
 
   const sendChatRequest = () => {
     if (!sendingRequest.current) {
+      // para prevenir mandar dos requests paralelos
       sendingRequest.current = true;
       setModalIsOpen(false);
       setUsernameNotFound(true);
-      console.log(`mandarle solicitud a ${username}`);
-      ClientService.sendChatRequest({ username })
-        .then((res: AxiosResponse) => {
-          console.group("Server Response");
-          console.log(res);
-          console.groupEnd();
-          setModalTitle(`¡Solicitud a '${username}' enviada!`);
-          setModalBody("Podrás enviar un mensaje cuando te haya aceptado.");
+      setLoading(true);
+      console.log(`mandandole solicitud a ${username}`);
+
+      // NOTE: set timeout para darle tiempo a react que renderice el loader
+      setTimeout(() => {
+        const dhParts = generateDH();
+
+        ClientService.sendChatRequest({
+          username,
+          pubKey: dhParts.pubKey,
+          p: dhParts.p,
+          g: dhParts.g,
         })
-        .catch((err: AxiosError) => {
-          console.group("Server Error");
-          console.log(err.response);
-          console.groupEnd();
-          setModalTitle(`¡Error!`);
-          setModalBody(err.response?.data.msg);
-        })
-        .finally(() => {
-          sendingRequest.current = false;
-          setModalIsOpen(true);
-        });
+          .then((res: AxiosResponse) => {
+            console.group("Server Response");
+            console.log(res);
+            console.groupEnd();
+            setModalTitle(`¡Solicitud a '${username}' enviada!`);
+            setModalBody("Podrás enviar un mensaje cuando te haya aceptado.");
+          })
+          .catch((err: AxiosError) => {
+            console.group("Server Error");
+            console.log(err.response);
+            console.groupEnd();
+            setModalTitle(`¡Error!`);
+            setModalBody(err.response?.data.msg);
+          })
+          .finally(() => {
+            sendingRequest.current = false;
+            setModalIsOpen(true);
+          });
+
+        setLoading(false);
+        sendingRequest.current = false;
+      }, 100);
     }
   };
 
@@ -102,6 +125,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
           onCancel={modalCleanup}
         />
       )}
+      {loading && <ValarModal isOpen title={"Mandando solicitud"} showLoader />}
       {modalIsOpen && usernameNotFound && (
         <ValarModal
           isOpen={modalIsOpen}
@@ -152,5 +176,4 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
     </>
   );
 };
-
 export default ValarSolicitarContacto;
