@@ -1,12 +1,13 @@
+import ValarSolicitarContacto from "@components/contacts/ValarSolicitarContacto";
 import { NextPage } from "next";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 
-const ValarSolicitarContacto = dynamic(
-  () => import("../../../components/contacts/ValarSolicitarContacto"),
-  {
-    ssr: false,
-  }
-);
+// const ValarSolicitarContacto = dynamic(
+//   () => import("../../../components/contacts/ValarSolicitarContacto"),
+//   {
+//     ssr: false,
+//   }
+// );
 
 const SolicitarContacto: NextPage = () => {
   return (

@@ -10,6 +10,7 @@ import {
 } from "baseui/modal";
 import { KIND } from "baseui/button";
 import { Spinner } from "baseui/spinner";
+import ValarSpinner from "./ValarSpinner";
 
 interface ValarModalProps {
   title: string;
@@ -44,13 +45,7 @@ const ValarModal: React.FC<ValarModalProps> = (props) => {
       {props.showLoader && (
         <ModalBody>
           <div className="flex justify-center items-center">
-            <Spinner
-              overrides={{
-                ActivePath: {
-                  style: ({ $theme }) => ({ fill: $theme.colors.primary }),
-                },
-              }}
-            />
+            <ValarSpinner />
           </div>
         </ModalBody>
       )}

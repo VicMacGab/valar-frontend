@@ -99,6 +99,25 @@ class ClientService {
       this.axiosOptions
     );
   }
+  static async sendPubKeyUrl(body: {
+    p: number[];
+    g: number[];
+    pubKey: number[];
+    friendUsername: string;
+  }) {
+    return await axios.put(
+      CommonService.sendPubKeyUrl,
+      body,
+      this.axiosOptions
+    );
+  }
+  static async finish(body: { friendUsername: string; friendId: string }) {
+    return await axios.put(
+      CommonService.finishExchangeUrl,
+      body,
+      this.axiosOptions
+    );
+  }
 }
 
 export default ClientService;

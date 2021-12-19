@@ -5,6 +5,7 @@ import { User } from "@utils/interfaces/User";
 import ValarSolicitudEntrante from "./ValarSolicitudEntrante";
 import ValarModal from "@components/general/ValarModal";
 import { createDiffieHellman } from "diffie-hellman";
+import ValarSpinner from "@components/general/ValarSpinner";
 
 interface IncomingRequest {
   _id: string;
@@ -45,36 +46,65 @@ const ValarSolicitudesEntrantes: React.FC<{}> = (props) => {
     // TODO:
 
     try {
-      const res = await ClientService.acceptChatRequest({ username });
-      const me = createDiffieHellman(
-        res.data.p.toString("hex"),
-        "hex",
-        res.data.g.toString("hex"),
-        "hex"
-      );
+      const acceptedChatRes = await ClientService.acceptChatRequest({
+        username,
+      });
 
-      me.generateKeys();
-      const secret = me.computeSecret(res.data.peerPublicPart);
-
-      // TODO: guardar el secret en localStorage (pero luego en IndexedDB)
-
-      console.group("Accepted Request Res");
-      console.log(res);
-      console.groupEnd();
-      setTitle("Solicitud aceptada");
-      setBody(
-        `Ahora puedes chatear con ${username} en la sección de 'Mensajes'`
-      );
       // borrar el request recien aceptado
       setIncomingRequests((prev) => {
         return prev.filter((req) => req.user.username !== username);
       });
 
-      // TODO: mandarle al servidor mi parte privada (g^b mod p) para que el otro pueda calcular el 'secret'
-      // TODO: en OutGoing requests, el servidor debe decirle al que mandó el request que ya se la aceptaron, cuando haga click en 'Llevame al chat!' el servidor le manda el g^b mod p (y posiblemente otras partes) para que el cliente pueda calcular el secreto final, guardarlo y poder hablar con end-to-end encryption
-      // TODO: eso implica cambios en los controllers, en la bd y en el UI
+      console.group("Accepted Request Res");
+      console.log(acceptedChatRes);
+      console.groupEnd();
+
+      console.log("acceptedChatRes.data.p.data: ", acceptedChatRes.data.p.data);
+
+      console.log("acceptedChatRes.data.g.data: ", acceptedChatRes.data.g.data);
+
+      console.log(
+        "acceptedChatRes.data.peerPublicPart.data: ",
+        acceptedChatRes.data.peerPublicPart.data
+      );
+
+      const prime = Buffer.from(acceptedChatRes.data.p.data).toString("hex");
+      const generator = Buffer.from(acceptedChatRes.data.g.data).toString(
+        "hex"
+      );
+
+      const me = createDiffieHellman(prime, "hex", generator, "hex");
+
+      console.log("created diffie hellman");
+
+      const pubKey = me.generateKeys();
+      console.log("created pub key: ");
+      const secret = me.computeSecret(acceptedChatRes.data.peerPublicPart.data);
+      console.log("secret: ", secret);
+
+      const sendPublicKeyRes = await ClientService.sendPubKeyUrl({
+        p: acceptedChatRes.data.p.data,
+        g: acceptedChatRes.data.g.data,
+        pubKey: Array.from(pubKey),
+        friendUsername: username,
+      });
+
+      console.group("Send Pub Key Res");
+      console.log(sendPublicKeyRes);
+      console.groupEnd();
+
+      // TODO: guardar el secret en localStorage (pero luego en IndexedDB)
+      localStorage.setItem(
+        `${sendPublicKeyRes.data.chatId}`,
+        secret.toString("hex")
+      );
+
+      setTitle("Solicitud aceptada");
+      setBody(
+        `Ahora puedes chatear con ${username} en la sección de 'Mensajes'`
+      );
     } catch (error) {
-      console.group("Accepted Request Err");
+      console.group("Err Accepting Chat or Sending Pub Key");
       console.log(error);
       console.groupEnd();
       setTitle("Ocurrió un error");
@@ -121,13 +151,19 @@ const ValarSolicitudesEntrantes: React.FC<{}> = (props) => {
         okText={"OK"}
         onConfirm={closeModal}
       />
-      <div className="mt-20 pt-3 w-screen h-screen flex flex-col justify-start items-center">
-        <h1 className="text-3xl my-4 pb-2 border-b-2 border-red-900">
+      <div className="mt-20 pt-3 w-screen h-screen flex flex-col justify-start items-center px-2">
+        <h1 className="text-3xl text-center my-4 pb-2 border-b-2 border-red-900">
           Solicitudes Entrantes
         </h1>
-        {loading && <h2>Obteniendo solicitudes entrantes...</h2>}
+        {loading && (
+          <div className="flex justify-center items-center">
+            <ValarSpinner size={27} />
+          </div>
+        )}
         {!loading && !error && incomingRequests.length == 0 && (
-          <h6 className="text-xl">No tienes solicitudes .</h6>
+          <h6 className="text-xl text-center">
+            No tienes solicitudes entrantes.
+          </h6>
         )}
         {!loading && !error && incomingRequests.length > 0 && (
           <div className="w-solicitudes">

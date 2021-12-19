@@ -53,12 +53,17 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
     const pubKey = alice.generateKeys();
     console.log("got pub key");
     const p = alice.getPrime();
+    console.log("got priv key");
+    const privKey = alice.getPrivateKey();
     console.log("got prime");
     const g = alice.getGenerator();
     console.log("got generator");
     console.log("pubKey: ", pubKey);
     console.log("p: ", p);
     console.log("g: ", g);
+    console.log("privKey: ", privKey);
+    // guardar el priv key porq lo necesitamos luego
+    localStorage.setItem(`${username}`, privKey.toString("hex"));
     return { g, pubKey, p };
   };
 
@@ -94,6 +99,7 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
             console.groupEnd();
             setModalTitle(`¡Error!`);
             setModalBody(err.response?.data.msg);
+            localStorage.removeItem(`${username}`);
           })
           .finally(() => {
             sendingRequest.current = false;
@@ -135,8 +141,8 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
           onCancel={() => modalCleanup()}
         />
       )}
-      <div className="flex flex-col justify-start items-stretch gap-4">
-        <div className="flex justify-around items-stretch">
+      <div className="max-w-full flex flex-col justify-start items-stretch gap-4">
+        <div className="flex items-stretch">
           <input
             className="flex-big valarSearchInput pl-2"
             type="text"
@@ -147,14 +153,14 @@ const ValarSolicitarContacto: React.FC<{}> = (props) => {
             }
           />
           <ValarButton
-            className="flex-small"
+            className="valarSearchBtn flex-small"
             text="Buscar"
             disabled={username.length < 4}
             secondary
             onClick={searchByUsername}
           />
         </div>
-        <div className="flex justify-around items-stretch">
+        <div className="solicitarContactoBtns">
           <ValarButton
             className="flex-small hover:bg-red-800 border-2 border-r-2 border-red-600"
             text="Ver solicitudes entrantes"

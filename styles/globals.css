@@ -156,6 +156,15 @@ button {
   flex: 1;
 }
 
+@media screen and (max-width: 345px) {
+  .valarSearchInput .valarSearchBtn .valarSearchInput::placeholder {
+    font-size: 0.7rem !important;
+  }
+  .flex-big {
+    flex: 3;
+  }
+}
+
 .valarInputError {
   text-align: center;
   font-size: 0.8rem;
@@ -305,4 +314,16 @@ button {
   z-index: 1;
   /* border: 1px solid black; */
   /* background-color: var(--secondary); */
+}
+
+.solicitarContactoBtns {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+@media screen and (max-width: 692px) {
+  .solicitarContactoBtns {
+    flex-direction: column;
+  }
 }

@@ -19,6 +19,10 @@ class CommonService {
     CommonService.requestsUrl + "/sent";
   static readonly incomingRequestsUrl: string =
     CommonService.requestsUrl + "/received";
+  static readonly sendPubKeyUrl: string =
+    CommonService.requestsUrl + "/sendPubKey";
+  static readonly finishExchangeUrl: string =
+    CommonService.requestsUrl + "/finish";
 
   static readonly searchUserByUsernameUrl: string =
     CommonService.baseUrl + "/user";
