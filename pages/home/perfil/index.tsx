@@ -30,7 +30,7 @@ const Perfil: NextPage = () => {
         setModalBody(err.response?.data.msg);
       })
       .finally(() => {
-        setTimeout(() => setModalIsOpen(true), 3000);
+        setTimeout(() => setModalIsOpen(true), 1000);
       });
   };
 
