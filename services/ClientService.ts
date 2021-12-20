@@ -7,12 +7,6 @@ import { Message } from "@utils/interfaces/Message";
 class ClientService {
   private static axiosOptions: AxiosRequestConfig = {
     withCredentials: true, // esto es para que mande los HTTP only cookies automaticamente
-    headers: {
-      origin: window.location.href.substring(
-        0,
-        window.location.href.indexOf("m/") + 1
-      ),
-    },
   };
 
   static async signUp(body: SignUpDTO) {
