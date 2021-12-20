@@ -4,7 +4,6 @@ import type {
   NextResponse as NextResponseType,
 } from "next/server";
 import { NextResponse } from "next/server";
-import cookieParser from "cookie-parser";
 
 export function middleware(
   req: NextRequestType,

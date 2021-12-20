@@ -29,7 +29,9 @@ const Perfil: NextPage = () => {
         setModalTitle("Ocurrió un error al cerrar su sesión.");
         setModalBody(err.response?.data.msg);
       })
-      .finally(() => setModalIsOpen(true));
+      .finally(() => {
+        setTimeout(() => setModalIsOpen(true), 3000);
+      });
   };
 
   const goBack = () => {
