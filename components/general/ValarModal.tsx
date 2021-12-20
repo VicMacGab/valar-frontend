@@ -1,4 +1,3 @@
-import { MutableRefObject, useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -9,7 +8,6 @@ import {
   ROLE,
 } from "baseui/modal";
 import { KIND } from "baseui/button";
-import { Spinner } from "baseui/spinner";
 import ValarSpinner from "./ValarSpinner";
 
 interface ValarModalProps {

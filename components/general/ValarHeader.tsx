@@ -14,7 +14,7 @@ const ValarHeader: React.FC<ValarHeaderProps> = (props) => {
         onClick={() => router.push("/home")}
       >
         <Image
-          src={require("../../public/favicon.png")}
+          src={require("../../public/favicon.ico")}
           alt="Logo de Valar"
           width={50}
           height={50}

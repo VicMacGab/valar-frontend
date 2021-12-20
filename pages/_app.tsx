@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             content="World's most awesome and secure chat."
           />
           {/* TODO: poner los og tags para los embeds */}
-          <link rel="icon" href="/favicon.png" />
+          <link rel="icon" href="/favicon.ico" />
         </Head>
         {router.pathname != "/" && <ValarHeader className="bgTertiary" />}
         <div className="tertiaryBackground">

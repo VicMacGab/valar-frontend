@@ -2,7 +2,7 @@ import ClientService from "@services/ClientService";
 import CommonService from "@services/CommonService";
 import { Message } from "@utils/interfaces/Message";
 import { AxiosError, AxiosResponse } from "axios";
-import { LegacyRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ValarChat from "./ValarChat";
 import ValarChatBottomBar from "./ValarChatBottomBar";
 import ValarChatPreview from "./ValarChatPreview";
@@ -334,7 +334,7 @@ const ValarChats: React.FC<{}> = (props) => {
           >
             <div className="flex flex-col">
               <Image
-                src={require("../../public/favicon.png")}
+                src={require("../../public/favicon.ico")}
                 width={50}
                 height={50}
                 objectFit="contain"

@@ -11,7 +11,7 @@ const LandingPage: NextPage = () => {
     <div className="centerOnScreenCol">
       <main className="w-responsive centerColStretchHorizontally">
         <Image
-          src={require("../public/favicon.png")}
+          src={require("../public/favicon.ico")}
           objectFit={"contain"}
           width={150}
           height={150}
