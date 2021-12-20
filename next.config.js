@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
+
+const securityHeaders = [
+  {
+    key: "Referrer-Policy",
+    value: "origin",
+  },
+];
+
 module.exports = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -13,5 +21,13 @@ module.exports = {
       process.env.NODE_ENV == "production"
         ? "wss://api.cliffdev.com"
         : "ws://localhost:5000",
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
+    ];
   },
 };

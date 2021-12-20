@@ -7,9 +7,6 @@ import { Message } from "@utils/interfaces/Message";
 class ClientService {
   private static axiosOptions: AxiosRequestConfig = {
     withCredentials: true, // esto es para que mande los HTTP only cookies automaticamente
-    headers: {
-      origin: "https://cliffdev.com",
-    },
   };
 
   static async signUp(body: SignUpDTO) {
