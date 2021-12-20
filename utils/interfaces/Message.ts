@@ -1,9 +1,13 @@
 export interface Message {
+  nonce: Uint8Array;
   usernameFrom: string;
-  content: string;
-  fromMe?: boolean;
+  chatId: string;
+
+  content: Uint8Array;
   _id: string;
+  timestamp?: Date;
+
+  fromMe?: boolean;
   edited?: boolean;
   deleted?: boolean;
-  timestamp?: Date;
 }

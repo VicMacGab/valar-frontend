@@ -2,7 +2,7 @@ import ClientService from "@services/ClientService";
 import CommonService from "@services/CommonService";
 import { Message } from "@utils/interfaces/Message";
 import { AxiosError, AxiosResponse } from "axios";
-import { useEffect, useRef, useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import ValarChat from "./ValarChat";
 import ValarChatBottomBar from "./ValarChatBottomBar";
 import ValarChatPreview from "./ValarChatPreview";
@@ -14,6 +14,7 @@ import Image from "next/image";
 import { useForceUpdate } from "@utils/hooks/forceUpdate";
 import { EditedMessage } from "@utils/interfaces/EditedMessage";
 import { DeletedMessage } from "@utils/interfaces/DeletedMessage";
+import CryptoService from "@services/CryptoService";
 
 interface ChatPreview {
   chat: string;
@@ -63,11 +64,23 @@ const ValarChats: React.FC<{}> = (props) => {
           // FIXME: estos updates estan mal, solo se deberia rerenderizar el mensaje que cambió, no todos los mensajes. Para ello:
           // TODO: Redux
 
-          socket.current!.on("message", (msg: Message) => {
+          socket.current!.on("message", async (msg: Message) => {
             console.log("received message from server: ", msg);
             if (currentChat.current) {
+              console.log("before encryption: ", msg.content);
+              const plaintext = await CryptoService.decrypt(
+                currentChat.current!._id,
+                msg.content,
+                msg.nonce
+              );
+
+              console.log("after encryption: ", plaintext);
+              msg.content = Buffer.from(plaintext);
+
               currentChat.current.messages.push(msg);
               forceUpdate();
+              const element = document.getElementById("chatContainer");
+              element!.scrollTop = element!.scrollHeight;
             } else {
               // TODO: acá se debería subir el chat que acaba el emitir el mensaje
               console.error(
@@ -76,10 +89,18 @@ const ValarChats: React.FC<{}> = (props) => {
             }
           });
 
-          socket.current!.on("peerMessageEdit", (msg: EditedMessage) => {
+          socket.current!.on("peerMessageEdit", async (msg: EditedMessage) => {
             if (currentChat.current) {
+              console.log("edited message event: ", msg);
+              const plaintext = await CryptoService.decrypt(
+                currentChat.current!._id,
+                msg.newContent,
+                msg.newNonce!
+              );
+
               currentChat.current.messages[msg.msgIdx].edited = true;
-              currentChat.current.messages[msg.msgIdx].content = msg.newContent;
+              currentChat.current.messages[msg.msgIdx].content =
+                Buffer.from(plaintext);
               forceUpdate();
             }
           });
@@ -116,13 +137,42 @@ const ValarChats: React.FC<{}> = (props) => {
       });
   }, []);
 
+  const decryptIncomingMessages = async () => {
+    return new Promise<void>(async (resolve, reject) => {
+      const key = localStorage.getItem(`${currentChat.current!._id}`)!;
+      await CryptoService.init(currentChat.current!._id, key);
+      currentChat.current?.messages.map(async (msg) => {
+        console.log("msg.content: ", msg.content);
+        console.log("msg.nonce: ", msg.content);
+        msg.content = Buffer.from(
+          await CryptoService.decrypt(
+            currentChat.current!._id,
+            // @ts-ignore
+            Uint8Array.from(msg.content.data),
+            // @ts-ignore
+            Uint8Array.from(msg.nonce.data)
+          )
+        );
+        forceUpdate();
+        // FIXME: optimizar como mrd, que esto renrenderice un solo mensaje
+      });
+      resolve();
+    });
+  };
+
   const showChat = (chatId: string, friend: string): void => {
     ClientService.getChatById(chatId)
-      .then((res: AxiosResponse) => {
+      .then(async (res: AxiosResponse) => {
         console.group("Get Chat By Id Res");
         console.log(res);
         console.groupEnd();
         currentChat.current = res.data.chat;
+        // currentChat.current!.messages = [];
+        decryptIncomingMessages().then(() => {
+          console.log("se desencriptaron todos los mensajes");
+          const element = document.getElementById("chatContainer");
+          element!.scrollTop = element!.scrollHeight;
+        });
         setFriend(friend);
         setMe(res.data.me);
         console.log("current chat: ", currentChat);
@@ -134,14 +184,36 @@ const ValarChats: React.FC<{}> = (props) => {
       });
   };
 
-  const sendMessage = (content: string): void => {
+  const sendMessage = async (content: string) => {
+    const [ciphertext, nonce] = await CryptoService.encrypt(
+      currentChat.current!._id,
+      content
+    );
+    console.log("ciphertext: ", ciphertext);
+
+    const plaintext = await CryptoService.decrypt(
+      currentChat.current!._id,
+      ciphertext,
+      nonce
+    );
+    console.log("plaintext: ", plaintext);
     if (socket.current!.connected) {
-      const newMsg = {
+      const newMsg: any = {
         usernameFrom: me,
-        content: content,
-        chatId: currentChat.current?._id,
+        chatId: currentChat.current!._id,
       };
-      // TODO: creo q el destination esta de más, el chatId basta
+      console.log("before encryption: ", content);
+
+      const [ciphertext, nonce] = await CryptoService.encrypt(
+        currentChat.current!._id,
+        content
+      );
+      newMsg.nonce = nonce;
+      newMsg.content = ciphertext;
+
+      console.log("after encryption: ", ciphertext);
+      console.log("sending msg: ", newMsg);
+      socket.current!.sendBuffer = [];
       socket.current!.emit("message", newMsg, (response: MessageAck) => {
         if (!response.ok) {
           console.log("error when sending message: ", response.error);
@@ -149,10 +221,13 @@ const ValarChats: React.FC<{}> = (props) => {
           console.log("msg sent with _id: ", response._id);
           currentChat.current!.messages.push({
             ...newMsg,
+            content: content,
             _id: response._id,
             timestamp: response.timestamp,
           });
           forceUpdate();
+          const element = document.getElementById("chatContainer");
+          element!.scrollTop = element!.scrollHeight;
         }
       });
     } else {
@@ -160,11 +235,23 @@ const ValarChats: React.FC<{}> = (props) => {
     }
   };
 
-  const editMessage = (msg: EditedMessage): void => {
+  const editMessage = async (msg: EditedMessage): Promise<void> => {
+    const [ciphertext, nonce] = await CryptoService.encrypt(
+      currentChat.current!._id,
+      msg.newContent.toString()
+    );
+
+    const saveContentBeforeEncryption = msg.newContent;
+
+    msg.newContent = ciphertext;
+    msg.newNonce = nonce;
+
     socket.current!.emit("messageEdit", msg, (ack: any) => {
       if (ack.ok) {
         currentChat.current!.messages[msg.msgIdx].edited = true;
-        currentChat.current!.messages[msg.msgIdx].content = msg.newContent;
+        // @ts-ignore
+        currentChat.current!.messages[msg.msgIdx].content =
+          saveContentBeforeEncryption.toString();
         forceUpdate();
       } else {
         console.error("error editing message", ack.reason);
@@ -219,9 +306,12 @@ const ValarChats: React.FC<{}> = (props) => {
           <div
             className={`${
               contactsMode ? "dissapearsWhenChatTight" : ""
-            } chatSingle max-w-full max-h-full flex flex-col justify-center items-stretch relative`}
+            } chatSingle max-w-full mensajesPageHeight flex flex-col justify-center items-stretch relative`}
           >
-            <div id="chatContainer" className="mt-3 overflow-y-scroll">
+            <div
+              id="chatContainer"
+              className="mt-3 overflow-y-scroll w-full h-full"
+            >
               <ValarChat
                 onGoBack={() => setContactsMode(true)}
                 me={me}
@@ -231,7 +321,6 @@ const ValarChats: React.FC<{}> = (props) => {
                 onDeleteMessage={deleteMessage}
               />
             </div>
-            {/* TODO: que este anclado abajo */}
             <div className="flex justify-center items-stretch border-2 border-solid border-gray-600">
               <ValarChatBottomBar onSend={(content) => sendMessage(content)} />
             </div>
@@ -239,9 +328,6 @@ const ValarChats: React.FC<{}> = (props) => {
         )}
         {!currentChat.current && (
           <div
-            // className={`${
-            //   contactsMode ? "dissapearsWhenChatTight" : ""
-            // } chatSingle m-3 flex justify-center items-center max-w-full overflow-y-scroll`}
             className={
               "dissapearsWhenChatTight chatSingle m-3 flex justify-center items-center max-w-full"
             }

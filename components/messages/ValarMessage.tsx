@@ -6,7 +6,11 @@ import { AiFillEdit } from "react-icons/ai";
 interface ValarMessageProps {
   idx: number;
   msg: Message;
-  onMessageEdited: (msgId: string, newContent: string, msgIdx: number) => void;
+  onMessageEdited: (
+    msgId: string,
+    newContent: Uint8Array,
+    msgIdx: number
+  ) => void;
   onMessageDeleted: (msgId: string, msgIdx: number) => void;
 }
 
@@ -16,40 +20,36 @@ const ValarMessage: React.FC<ValarMessageProps> = (props) => {
   const time = new Date(props.msg.timestamp!)
     .toLocaleTimeString(navigator.language, { hour12: false })
     .slice(0, 5);
-  const [newContent, setNewContent] = useState(props.msg.content);
+  const [newContent, setNewContent] = useState("");
   const [editing, setEditing] = useState(false);
   const [hovering, setHovering] = useState(false);
-  console.log("message rendered");
+  // console.log("message content: ", props.msg.content);
 
   const getMsgContent = () => {
     if (props.msg.deleted) {
-      console.log("este mensaje ha sido borado");
       return <div className="italic">Mensaje borrado</div>;
     } else {
       if (props.msg.edited) {
-        console.log("este mensaje ha sido editado");
         return (
           <div className="relative">
-            {props.msg.content}
+            {props.msg.content.toString()}
             <span className="absolute text-xxs -bottom-2 right-1">
               <div>(e)</div>
             </span>
           </div>
         );
       } else {
-        return <div>{props.msg.content}</div>;
+        return <div>{props.msg.content.toString()}</div>;
       }
     }
   };
 
   const editMessage = (): void => {
-    //TODO:
     setEditing(false);
-    props.onMessageEdited(props.msg._id, newContent, props.idx);
+    props.onMessageEdited(props.msg._id, Buffer.from(newContent), props.idx);
   };
 
   const deleteMessage = (): void => {
-    //TODO:
     props.onMessageDeleted(props.msg._id, props.idx);
   };
 
@@ -83,6 +83,7 @@ const ValarMessage: React.FC<ValarMessageProps> = (props) => {
               "absolute -left-10 top-1 z-10 p-1 bg-white rounded-lg hover:bg-gray-400 cursor-pointer"
             }
             onClick={() => {
+              setNewContent(props.msg.content.toString());
               setEditing(true);
             }}
           >
@@ -95,7 +96,7 @@ const ValarMessage: React.FC<ValarMessageProps> = (props) => {
       )}
       {editing && (
         <input
-          className="outline-none border-none bg-transparent p-0 m-0 pl-1 w-auto"
+          className="min-w-min outline-none border-none bg-transparent p-0 m-0 pl-1"
           type="text"
           value={newContent}
           onChange={(e) => setNewContent(e.currentTarget.value)}
